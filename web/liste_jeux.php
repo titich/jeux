@@ -1,8 +1,11 @@
 <?php
 include_once dirname(__FILE__) . '/../structure/sql.php';
 include_once dirname(__FILE__) . '/../structure/header.php';
-//echo $_SERVER['SERVER_NAME'];
 
+//echo $_SERVER['SERVER_NAME'];
+include_once dirname(__FILE__) . '/../function/age.php';
+include_once dirname(__FILE__) . '/../function/bouton_classement.php';
+include_once dirname(__FILE__) . '/../function/slugify.php';
 
 $etat_jeux=array(
     array("nom"=>"own","bdd"=>"jeu_bgg_own","bdd_vue"=>"nb_own"),
@@ -45,13 +48,7 @@ if(!is_null($sql_filtre_own)){
 
 
 
-function age($date) {
-    $age = date('Y') - date('Y', strtotime($date));
-    if (date('md') < date('md', strtotime($date))) {
-        return $age - 1;
-    }
-    return $age;
-}
+
 $array_joueurs_nommes=array(
     array("qui"=>"Alexine","Naissance"=>"2012-09-26"),
     array("qui"=>"Eliam","Naissance"=>"2015-02-16"),
@@ -145,98 +142,7 @@ if(isset($_POST["checkbox_boite"])){
     }
 }
 
-function bouton_classement($txt,$sens="ASC"){
-    $sortie="";
-    $txt_format = slugify($txt);
-    //echo $txt_format;
-    //echo nettoyerChaine($txt);
-    /*if(isset($_POST[$txt_format])) {
-        $sortie .= '<input id="' . $txt_format . '" name="' . $txt_format . '" type="hidden" value="' . $_POST[$txt_format] . '">';
-    }*/
 
-    $sortie.='<button class="btn ';
-    if(isset($_POST[$txt_format])){
-        $sortie.='btn-secondary';
-    }else{
-        //$sortie.='btn-outline-secondary';
-        $sortie.='btn-light';
-    }
-    $sortie.='" type="submit" name="';
-    $sortie.=$txt_format;
-    $sortie.='" value="';
-
-    if(isset($_POST[$txt_format])){
-        //echo $txt_format." = ".$_POST[$txt_format];
-        if($_POST[$txt_format]==0){
-            if($sens=="DESC"){
-                $sortie.=2;
-            }else{
-                $sortie.=1;
-            }
-        }elseif($_POST[$txt_format]==1){
-            if($sens=="DESC"){
-                $sortie.=0;
-            }else{
-                $sortie.=2;
-            }
-        }elseif($_POST[$txt_format]==2){
-            if($sens=="DESC"){
-                $sortie.=1;
-            }else{
-                $sortie.=0;
-            }
-        }
-    }else{
-        if($sens=="DESC"){
-            $sortie.=2;
-        }else{
-            $sortie.=1;
-        }
-    }
-    $sortie.='">';
-    $sortie.=ucfirst($txt);
-    if(isset($_POST[$txt_format])){
-        if($_POST[$txt_format]==0){
-
-        }elseif($_POST[$txt_format]==1){
-            $sortie.=' <i class="fas fa-sort-alpha-down"></i>';
-        }elseif($_POST[$txt_format]==2){
-            $sortie.=' <i class="fas fa-sort-alpha-up"></i>';
-        }
-    }else{
-
-    }
-
-    $sortie.='</button>';
-    //$sortie.='<input type="hidden" name="sens" value="'.$sens.'">';
-
-    $sortie.='</th>';
-    $sortie.='';
-
-    return $sortie;
-}
-function bouton_classement_POST($txt,$champ_bdd){
-    $txt_format = slugify($txt);
-    $retour=null;
-    if(isset ($_POST[$txt_format])){
-        //var_dump("hello");
-        if($_POST[$txt_format]==1){
-            $retour="`".$champ_bdd."` ASC, ";
-        }elseif($_POST[$txt_format]==2){
-            $retour="`".$champ_bdd."` DESC, ";
-        }
-    }
-    return $retour;
-}
-function bouton_valider_classement($txt){
-    $txt_format = slugify($txt);
-    $retour=null;
-    if(isset ($_POST[$txt_format]) ) {
-        //var_dump($txt_format."JJJ");
-        $retour = '<button type="submit" name="' . $txt_format . '" value="' . $_POST[$txt_format] . '" class="btn btn-primary">Submit</button>';
-    }
-    return $retour;
-}
 
 //var_dump($array_liste_collonne);
 //var_dump($array_liste_collonne);
@@ -308,53 +214,7 @@ foreach ($array_liste_collonne as $col_actu){
 }
 
 
-function slugify($text)
-{
-    // Strip html tags
-    $text=strip_tags($text);
-    // Replace non letter or digits by -
-    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-    // Transliterate
-    setlocale(LC_ALL, 'en_US.utf8');
-    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-    // Remove unwanted characters
-    $text = preg_replace('~[^-\w]+~', '', $text);
-    // Trim
-    $text = trim($text, '-');
-    // Remove duplicate -
-    $text = preg_replace('~-+~', '-', $text);
-    // Lowercase
-    $text = strtolower($text);
-    // Check if it is empty
-    if (empty($text)) { return 'n-a'; }
-    // Return result
-    return $text;
-}
 
-function btn_click($nom_array,$zone){
-    $sortie=null;
-    foreach ($nom_array as $key=>$nom){
-        $etat_btn_best="btn-outline-secondary";
-        $etat_btn_best_value=1;
-        //$invisible=null;
-        ///$nom_clean = strtr($nom, 'ÁÀÂÄÃÅÇÉÈÊËÍÏÎÌÑÓÒÔÖÕÚÙÛÜÝáàâäãåçéèêëíìîïñóòôöõúùûüýÿ', 'AAAAAACEEEEEIIIINOOOOOUUUUYaaaaaaceeeeiiiinooooouuuuyy');
-        //$nom_clean = nettoyerChaine($nom);
-        $nom_clean = slugify($nom);
-        $actif=null;
-        if(isset($_POST[$zone.'_type'])){
-            if($_POST[$zone.'_type']==$nom_clean){
-                $actif="checked";
-            }
-        }elseif($key==0){
-            $actif="checked";
-        }
-        //$sortie.='<button id="nbjoueurs_'.$nom.'" name="nbjoueurs_'.$nom.'" class="btn '.$etat_btn_best.'" type="submit" value="'.$etat_btn_best_value.'">'.ucfirst($nom).'</button>';
-        $sortie.='<input type="radio" class="btn-check" name="'.$zone.'_type" id="'.$zone.'_'.$nom_clean.'" autocomplete="off" value="'.$nom_clean.'" '.$actif.'>';
-        $sortie.='<label class="btn btn-outline-primary" for="'.$zone.'_'.$nom_clean.'">'.$nom.'</label>';
-    }
-
-    return $sortie;
-}
 //var_dump($_POST);
 /*}else{
     var_dump("existe pas");
