@@ -1,0 +1,30 @@
+language: php
+
+matrix:
+  include:
+    - php: 7.3
+    - php: 7.4
+    - php: 8.0
+    - php: nightly
+  allow_failures:
+    - php: nightly
+
+env:
+  - COMPOSER_ALLOW_XDEBUG=0
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - composer validate
+
+install:
+  - composer install
+
+script:
+  - composer test:all
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover build/clover.xml
