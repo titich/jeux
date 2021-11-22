@@ -11,6 +11,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/lukesnowden/google-shopping-feed" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/gregwar/cache" />
       <excludeFolder url="file://$MODULE_DIR$/STL" />
+      <excludeFolder url="file://$MODULE_DIR$/structure/old" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
