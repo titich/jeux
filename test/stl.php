@@ -1,0 +1,106 @@
+<?php
+
+function cree_stl($nom,$x_1,$y_1,$z_1){
+    //$x_1=28;
+    //$y_1=1;
+    //$z_1=228;
+
+    $x=sprintf("%.e", $x_1);
+    $y=sprintf("%.e", $y_1);
+    $z=sprintf("%.e", $z_1);
+
+    //var_dump($z);
+
+    $data = null;
+    $data .= "solid ASCII\n";
+    $data .= "  facet normal 0.000000e+00 0.000000e+00 -".$x."\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   ".$x." ".$z." -".$y."\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal -0.000000e+00 0.000000e+00 -".$x."\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   ".$x." ".$z." -".$y."\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   0.000000e+00 ".$z." -".$y."\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal ".$x." -0.000000e+00 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   ".$x." ".$z." 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal ".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   ".$x." ".$z." 0.000000e+00\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   ".$x." ".$z." -".$y."\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal 0.000000e+00 0.000000e+00 ".$x."\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   0.000000e+00 ".$z." 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal -0.000000e+00 0.000000e+00 ".$x."\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 ".$z." 0.000000e+00\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   ".$x." ".$z." 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal -".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   0.000000e+00 ".$z." -".$y."\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal -".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 ".$z." -".$y."\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   0.000000e+00 ".$z." 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal 0.000000e+00 ".$x." -0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 ".$z." -".$y."\n";
+    $data .= "      vertex   0.000000e+00 ".$z." 0.000000e+00\n";
+    $data .= "      vertex   ".$x." ".$z." -".$y."\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal 0.000000e+00 ".$x." 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   ".$x." ".$z." -".$y."\n";
+    $data .= "      vertex   0.000000e+00 ".$z." 0.000000e+00\n";
+    $data .= "      vertex   ".$x." ".$z." 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal 0.000000e+00 -".$x." 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "  facet normal 0.000000e+00 -".$x." 0.000000e+00\n";
+    $data .= "    outer loop\n";
+    $data .= "      vertex   0.000000e+00 0.000000e+00 0.000000e+00\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 -".$y."\n";
+    $data .= "      vertex   ".$x." 0.000000e+00 0.000000e+00\n";
+    $data .= "    endloop\n";
+    $data .= "  endfacet\n";
+    $data .= "endsolid\n";
+
+    file_put_contents('../STL/'.$nom.'.stl', $data);
+    return "ok";
+}
+
+var_dump(cree_stl("test",5,4,3));

@@ -1,0 +1,100 @@
+.container {
+    max-width: 960px;
+}
+
+/*
+ * Custom translucent site header
+ */
+
+.site-header {
+    background-color: rgba(0, 0, 0, .85);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+}
+.site-header a {
+    color: #8e8e8e;
+    transition: color .15s ease-in-out;
+}
+.site-header a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+/*
+ * Dummy devices (replace them with your own or something else entirely!)
+ */
+
+.product-device {
+    position: absolute;
+    right: 10%;
+    bottom: -30%;
+    width: 300px;
+    height: 540px;
+    background-color: #333;
+    border-radius: 21px;
+    transform: rotate(30deg);
+}
+
+.product-device::before {
+    position: absolute;
+    top: 10%;
+    right: 10px;
+    bottom: 10%;
+    left: 10px;
+    content: "";
+    background-color: rgba(255, 255, 255, .1);
+    border-radius: 5px;
+}
+
+.product-device-2 {
+    top: -25%;
+    right: auto;
+    bottom: 0;
+    left: 5%;
+    background-color: #e5e5e5;
+}
+
+
+/*
+ * Extra utilities
+ */
+
+.flex-equal > * {
+    flex: 1;
+}
+@media (min-width: 768px) {
+    .flex-md-equal > * {
+        flex: 1;
+    }
+}
+
+.btn-bgg {
+    color: #fff;
+    background-color: #3d2a36;
+    border-color: #3d2a36;
+}
+.btn-bgg:hover {
+    color: #fff;
+    background-color: #3d2a36;
+    border-color: #3c2429;
+}
+.btn-check:focus + .btn-bgg, .btn-bgg:focus {
+    color: #fff;
+    background-color: #3d2a36;
+    border-color: #3c2429;
+    box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5);
+}
+.btn-check:checked + .btn-bgg, .btn-check:active + .btn-bgg, .btn-bgg:active, .btn-bgg.active, .show > .btn-bgg.dropdown-toggle {
+    color: #fff;
+    background-color: #3c2429;
+    border-color: #3c1f1d;
+}
+.btn-check:checked + .btn-bgg:focus, .btn-check:active + .btn-bgg:focus, .btn-bgg:active:focus, .btn-bgg.active:focus, .show > .btn-bgg.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5);
+}
+.btn-bgg:disabled, .btn-bgg.disabled {
+    color: #fff;
+    background-color: #3d2a36;
+    border-color: #3d2a36;
+}
+

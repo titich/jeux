@@ -1,0 +1,207 @@
+{
+    "packages": [
+        {
+            "name": "babymarkt/deepl-php-lib",
+            "version": "v3.0.1",
+            "version_normalized": "3.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Baby-Markt/deepl-php-lib.git",
+                "reference": "443772c9613fee6334cb8563436adb86f6c4f8ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Baby-Markt/deepl-php-lib/zipball/443772c9613fee6334cb8563436adb86f6c4f8ea",
+                "reference": "443772c9613fee6334cb8563436adb86f6c4f8ea",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": ">=7.3 <8.1"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "^2.10",
+                "phpunit/phpunit": "^9",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "time": "2021-07-09T15:22:18+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "BabyMarkt\\DeepL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Entwicklungsteam babymarkt.de",
+                    "email": "entwicklung@babymarkt.de"
+                }
+            ],
+            "description": "DeepL API Client Library supporting PHP >= 7.3 && PHP < 8.1",
+            "homepage": "https://github.com/Baby-Markt/deepl-php-lib",
+            "keywords": [
+                "babymarkt",
+                "deepl",
+                "deeply",
+                "i18n",
+                "translation",
+                "translator"
+            ],
+            "support": {
+                "issues": "https://github.com/Baby-Markt/deepl-php-lib/issues",
+                "source": "https://github.com/Baby-Markt/deepl-php-lib/tree/v3.0.1"
+            },
+            "install-path": "../babymarkt/deepl-php-lib"
+        },
+        {
+            "name": "gregwar/cache",
+            "version": "v1.0.13",
+            "version_normalized": "1.0.13.0",
+            "target-dir": "Gregwar/Cache",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Gregwar/Cache.git",
+                "reference": "184cc341c25298ff7d584f86b55b6ca26626da4f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Gregwar/Cache/zipball/184cc341c25298ff7d584f86b55b6ca26626da4f",
+                "reference": "184cc341c25298ff7d584f86b55b6ca26626da4f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "time": "2021-04-20T07:23:58+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Gregwar\\Cache": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gregwar",
+                    "email": "g.passault@gmail.com"
+                }
+            ],
+            "description": "A lightweight file-system cache system",
+            "keywords": [
+                "cache",
+                "caching",
+                "file-system",
+                "system"
+            ],
+            "install-path": "../gregwar/cache/Gregwar/Cache"
+        },
+        {
+            "name": "lukesnowden/google-shopping-feed",
+            "version": "2.2.8",
+            "version_normalized": "2.2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lukesnowden/google-shopping-feed.git",
+                "reference": "d2429ab36b2596fdc78a4c57905d2114d0053fe8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lukesnowden/google-shopping-feed/zipball/d2429ab36b2596fdc78a4c57905d2114d0053fe8",
+                "reference": "d2429ab36b2596fdc78a4c57905d2114d0053fe8",
+                "shasum": ""
+            },
+            "require": {
+                "gregwar/cache": "1.0.*",
+                "php": ">=5.3.0"
+            },
+            "time": "2021-03-12T14:19:39+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "LukeSnowden\\GoogleShoppingFeed": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luke Snowden",
+                    "email": "luke@sno.wden.co.uk"
+                }
+            ],
+            "description": "Google Shopping Feed API",
+            "homepage": "https://github.com/lukesnowden/google-shopping-feed",
+            "keywords": [
+                "Google Shopping Feed",
+                "api",
+                "feed",
+                "google",
+                "shopping"
+            ],
+            "install-path": "../lukesnowden/google-shopping-feed"
+        },
+        {
+            "name": "nataniel/bggxmlapi2",
+            "version": "v1.1.5",
+            "version_normalized": "1.1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nataniel/bggxmlapi2.git",
+                "reference": "c0f3ba00fc70c2331c82726dc9e89ea1954086e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nataniel/bggxmlapi2/zipball/c0f3ba00fc70c2331c82726dc9e89ea1954086e9",
+                "reference": "c0f3ba00fc70c2331c82726dc9e89ea1954086e9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.6.1"
+            },
+            "time": "2021-06-21T17:49:13+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Nataniel\\BoardGameGeek": "src/",
+                    "Nataniel\\BoardGameGeekTest": "tests/src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Artur Jedlinski",
+                    "email": "artur@jedlinski.pl"
+                }
+            ],
+            "description": "BoardGameGeek.com XML API2 - PHP Client Library",
+            "support": {
+                "issues": "https://github.com/nataniel/bggxmlapi2/issues",
+                "source": "https://github.com/nataniel/bggxmlapi2/tree/v1.1.5"
+            },
+            "install-path": "../nataniel/bggxmlapi2"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}
