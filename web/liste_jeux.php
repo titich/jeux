@@ -6,6 +6,7 @@ include_once dirname(__FILE__) . '/../structure/header.php';
 include_once dirname(__FILE__) . '/../function/age.php';
 include_once dirname(__FILE__) . '/../function/bouton_classement.php';
 include_once dirname(__FILE__) . '/../function/slugify.php';
+include_once dirname(__FILE__) . '/../function/btn_click.php';
 
 $etat_jeux=array(
     array("nom"=>"own","bdd"=>"jeu_bgg_own","bdd_vue"=>"nb_own"),
