@@ -4,6 +4,47 @@ include_once dirname(__FILE__) . '/../structure/header.php';
 //echo $_SERVER['SERVER_NAME'];
 
 
+$etat_jeux=array(
+    array("nom"=>"own","bdd"=>"jeu_bgg_own","bdd_vue"=>"nb_own"),
+    array("nom"=>"préorded","bdd"=>"jeu_bgg_preordered","bdd_vue"=>"nb_preordered"),
+    array("nom"=>"veut vendre","bdd"=>"jeu_bgg_prevowned","bdd_vue"=>"nb_prevowned"),
+    array("nom"=>"a_vendre","bdd"=>"jeu_bgg_fortrade","bdd_vue"=>"nb_fortrade"),
+    array("nom"=>"veux","bdd"=>"jeu_bgg_want","bdd_vue"=>"nb_want"),
+    array("nom"=>"veux jouer","bdd"=>"jeu_bgg_wanttoplay","bdd_vue"=>"nb_wanttoplay"),
+    array("nom"=>"veut acheter","bdd"=>"jeu_bgg_wanttobuy","bdd_vue"=>"nb_wanttobuy"),
+    array("nom"=>"wishlist","bdd"=>"jeu_bgg_wishlist","bdd_vue"=>"nb_wishlist"),
+);
+$sql_filtre_own=null;
+foreach ($etat_jeux as $key=>$etat_jeu_actu){
+    $sql_nb_cat = "SELECT `".$etat_jeu_actu["bdd_vue"]."` AS `nb`  \n"
+        . "FROM `v_nb_cat`;";
+    //echo "<p>".$sql_nb_cat."</p>";
+    $res_nb_cat = mysqli_query ($ezine_db, $sql_nb_cat) or ezine_mysql_die($ezine_db, $sql_nb_cat) ;
+    //$num_ticket=mysqli_insert_id($ezine_db);
+    $nbre_nb_cat=mysqli_num_rows($res_nb_cat);
+    $bdd_nb_cat = mysqli_fetch_object($res_nb_cat);
+    if($bdd_nb_cat->nb==0){
+        unset($etat_jeux[$key]);
+    }else{
+        $etat_jeux[$key]["nbre"]=$bdd_nb_cat->nb;
+        if(isset($_POST["btn-".$etat_jeu_actu["bdd"]]) && $_POST["btn-".$etat_jeu_actu["bdd"]]=="on"){
+            //var_dump($etat_jeu_actu);
+            if(is_null($sql_filtre_own)){
+                $sql_filtre_own.= " AND (`".$etat_jeu_actu["bdd"]."` = 1 ";
+            }else{
+                $sql_filtre_own.= " OR `".$etat_jeu_actu["bdd"]."` = 1 ";
+            }
+        }
+    }
+}
+if(!is_null($sql_filtre_own)){
+    $sql_filtre_own.= " )";
+}
+
+
+
+
+
 function age($date) {
     $age = date('Y') - date('Y', strtotime($date));
     if (date('md') < date('md', strtotime($date))) {
@@ -348,7 +389,7 @@ $i=1;
 $sql_liste_jeu="SELECT * \n"
     . "FROM `jeu`\n"
     . "WHERE 1\n"
-    . $sql_liste_jeu_filtre."\n"
+    . $sql_liste_jeu_filtre." ".$sql_filtre_own."\n"
     . "ORDER BY ".$sql_liste_jeu_order_by." `jeu_bgg_averageweight` DESC,`jeu_bgg_yearpublished` DESC";
 //echo "<p>".$sql_liste_jeu."</p>";
 $res_liste_jeu = mysqli_query ($ezine_db, $sql_liste_jeu) or ezine_mysql_die($ezine_db, $sql_liste_jeu) ;
@@ -417,6 +458,14 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
 
     $i++;
 }
+
+
+
+
+
+
+
+
 //var_dump($_POST);
 
 ?>
@@ -443,7 +492,26 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                             echo '<input type="hidden" name="age_min_joueur_val" id="age_min_joueur_val" value="abc">';
                         }
                         ?>
+                        <div class="row">
+                            <div class="col mb-2">
+                                <div class="btn-group" role="group">
+                                    <?php
 
+                                    foreach ($etat_jeux as $etat_jeu_actu){
+                                        $etat=null;
+                                        if($etat_jeu_actu["bdd"]=="jeu_bgg_own" && empty($_POST)){
+                                            $etat="checked";
+                                        }
+                                        if(isset($_POST['btn-'.$etat_jeu_actu["bdd"]]) && $_POST['btn-'.$etat_jeu_actu["bdd"]]== "on"){
+                                            $etat="checked";
+                                        }
+                                        echo '<input type="checkbox" class="btn-check" id="btn-'.$etat_jeu_actu["bdd"].'" name="btn-'.$etat_jeu_actu["bdd"].'" '.$etat.' autocomplete="off">';
+                                        echo '<label class="btn btn-outline-primary" for="btn-'.$etat_jeu_actu["bdd"].'">'.$etat_jeu_actu["nom"].' <span class="badge rounded-pill bg-secondary">'.$etat_jeu_actu["nbre"].'</span></label>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col">
                                 <div class="input-group mb-3">
@@ -477,7 +545,7 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                             </div>
                             <div class="col">
                                 <div class="input-group mb-3">
-                                    <button class="btn btn-outline-secondary dropdown-toggle col-sm-3" type="button" data-bs-toggle="dropdown" id="age_min_joueur" name="age_min_joueur" aria-expanded="false" style="text-align: left;">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" id="age_min_joueur" name="age_min_joueur" aria-expanded="false" style="text-align: left;">
                                         <?php
                                         if(isset($_POST["age_min_joueur_val"]) and is_numeric($_POST["age_min_joueur_val"])){
                                             if($_POST["age_min_joueur_val"]==0){
@@ -546,6 +614,7 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                                         ?>
                                 </div>
                             </div>
+
                         </div>
 
                         <?php
