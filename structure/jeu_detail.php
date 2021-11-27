@@ -1,4 +1,8 @@
 <?php
+
+
+
+
 include_once dirname(__FILE__) . '/../structure/sql.php';
 include_once dirname(__FILE__) . '/../structure/header.php';
 //echo $_SERVER['SERVER_NAME'];
@@ -366,11 +370,6 @@ while($bdd_graph_cat = mysqli_fetch_object($res_graph_cat)){
                 <div class="card-body">
                     <figure class="highcharts-figure">
                         <div id="graph3"></div>
-                        <p class="highcharts-description">
-                            Basic line chart showing trends in a dataset. This chart includes the
-                            <code>series-label</code> module, which adds a label to each line for
-                            enhanced readability.
-                        </p>
                     </figure>
                 </div>
             </div>

@@ -21,6 +21,9 @@
         legend: {
             enabled: true,
         },
+        credits: {
+            enabled: false
+        },
         yAxis: [{ // Primary yAxis
 
         }, { // Secondary yAxis
