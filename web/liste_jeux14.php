@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Versions
+ * **********************************************************************************************************************
+ * 14 (27.11.2021)
+ * ajout de la 1ere version de la gestion des prets.
+ * **********************************************************************************************************************
+ **/
 
 
 include_once dirname(__FILE__) . '/../structure/sql.php';
@@ -263,7 +270,24 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
     //var_dump($bdd_liste_jeu->jeu_nom);
     $ligne_tableau.="<tr>";
     $ligne_tableau.='<th scope="row">'.$i.'</th>';
-    $ligne_tableau.='<td><a class="btn btn-primary btn-sm" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'" role="button"><i class="fas fa-info"></i></a></td>';
+    //$ligne_tableau.='<td><a class="btn btn-primary btn-sm" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'" role="button"><i class="fas fa-info"></i></a></td>';
+    $ligne_tableau.='<td>';
+    $ligne_tableau.='<div class="btn-group" role="group">';
+    $ligne_tableau.='<a class="btn btn-primary btn-sm" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'" role="button"><i class="fas fa-info"></i></a>';
+    if($bdd_liste_jeu->jeu_est_pret ==1){
+        $ligne_tableau.='<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#Modal_pret" data-id_jeu="'.$bdd_liste_jeu->jeu_id.'" data-titre_jeu="'.$bdd_liste_jeu->jeu_nom.'">';
+        $ligne_tableau.='<span class="fa-stack">';
+        $ligne_tableau.='<i class="fas fa-share fa-stack-1x"></i>';
+        $ligne_tableau.='<i class="fas fa-ban fa-stack-2x" style="color:Tomato"></i>';
+        $ligne_tableau.='</span>';
+        $ligne_tableau.='';
+        $ligne_tableau.='</button>';
+    }else{
+        $ligne_tableau.='<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#Modal_pret" data-id_jeu="'.$bdd_liste_jeu->jeu_id.'" data-titre_jeu="'.$bdd_liste_jeu->jeu_nom.'"><i class="fas fa-share"></i></button>';
+    }
+    $ligne_tableau.='</div>';
+    $ligne_tableau.='</td>';
+
     if($type_operation==2){
         foreach ($array_liste_collonne as $col_actu){
             if(isset($col_actu[3])){
@@ -330,7 +354,36 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
 
 
 
-//var_dump($_POST);
+var_dump($_POST);
+
+if(isset($_POST["id_jeux_pret"]) && isset($_POST["pret_qui"])){
+    var_dump("prete ".$_POST["id_jeux_pret"]." à ".$_POST["pret_qui"]."");
+    $sql_up_pret = "UPDATE\n"
+        . "    `jeu`\n"
+        . "SET\n"
+        . "    `jeu_est_pret` = '1',\n"
+        . "    `jeu_est_pret_qui` = '".$_POST["pret_qui"]."'\n"
+        . "WHERE\n"
+        . "    `jeu_id` = '".$_POST["id_jeux_pret"]."';";
+    //echo "<p>".$sql_up_pret."</p>";
+    mysqli_query($ezine_db, $sql_up_pret) or ezine_mysql_die($ezine_db, $sql_up_pret);
+
+}
+$sql_liste_personnes_pret = "SELECT\n"
+    . "    `personne_pret_id`,\n"
+    . "    `personne_pret_nom`,\n"
+    . "    `personne_pret_prenom`\n"
+    . "FROM\n"
+    . "    `personne_pret`;";
+//echo "<p>".$sql_liste_personnes_pret."</p>";
+$res_liste_personnes_pret = mysqli_query($ezine_db, $sql_liste_personnes_pret) or ezine_mysql_die($ezine_db, $sql_liste_personnes_pret);
+//$num_ticket=mysqli_insert_id($ezine_db);
+$nbre_liste_personnes_pret = mysqli_num_rows($res_liste_personnes_pret);
+$liste_personnes_pret = null;
+while ($bdd_liste_personnes_pret = mysqli_fetch_object($res_liste_personnes_pret)) {
+    $liste_personnes_pret .= '<option value="' . $bdd_liste_personnes_pret->personne_pret_id . '">' . $bdd_liste_personnes_pret->personne_pret_nom . ' ' . $bdd_liste_personnes_pret->personne_pret_prenom . '</option>';
+}
+
 
 ?>
 <!--<a href="https://www.boardgamegeek.com/xmlapi2/collection?username=titich" >lien</a>--!>
@@ -518,13 +571,58 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                     ?>
                     </tbody>
                 </table>
+                <div class="modal fade" id="Modal_pret" tabindex="-1" aria-labelledby="Modal_pret_label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="Modal_pret_label">Prêt de jeux</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="id_jeux_pret" name="id_jeux_pret" value="XXX">
+                                <select class="form-select" id="pret_qui" name="pret_qui">
+
+                                    <option disabled selected hidden>Choisir une personne</option>
+                                    <?php echo $liste_personnes_pret; ?>
+
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </main>
 
+<script type="text/javascript">
+    var Modal_pret = document.getElementById('Modal_pret')
+    Modal_pret.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var id_jeu = button.getAttribute('data-id_jeu')
+        var titre = button.getAttribute('data-titre_jeu')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        //alert(recipient);
+        var modalTitle = Modal_pret.querySelector('.modal-title')
+        //var modalBodyInput = Modal_pret.querySelector('.recipient-name')
+        var modalHidden = document.getElementById("id_jeux_pret");
 
+        modalTitle.textContent = 'Prêt de ' + titre;
+        modalHidden.value = id_jeu;
+    })
+</script>
 <?php
+
+
 include_once dirname(__FILE__) . '/../js/dropdown_perso.php';
 
 include_once dirname(__FILE__) . '/../structure/footer.php';
