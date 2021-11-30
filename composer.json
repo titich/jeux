@@ -12,6 +12,7 @@
   "require": {
     "babymarkt/deepl-php-lib": "^3.0",
     "nataniel/bggxmlapi2": "^1.1",
-    "lukesnowden/google-shopping-feed": "^2.2"
+    "lukesnowden/google-shopping-feed": "^2.2",
+    "ext-mysqli": "*"
   }
 }
