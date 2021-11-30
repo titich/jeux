@@ -7,7 +7,7 @@
  * ajout de la 1ere version de la gestion des prets.
  * **********************************************************************************************************************
  **/
-
+$ezine_db=null;
 
 include_once dirname(__FILE__) . '/../structure/sql.php';
 include_once dirname(__FILE__) . '/../structure/header.php';
@@ -110,8 +110,8 @@ foreach ($_POST as $key=>$post_actu){
             $quoi_update_array=explode("@",$key);
             var_dump(explode("@",$key));
             $array_inter=array_column($array_liste_collonne, 0);
-            foreach ($array_inter as $key=>$value){
-                $array_inter[$key]=slugify($value);
+            foreach ($array_inter as $key2=>$value){
+                $array_inter[$key2]=slugify($value);
             }
             $champ= $array_liste_collonne[array_search($quoi_update_array[2], $array_inter)][2];
 
@@ -356,6 +356,7 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
 
 var_dump($_POST);
 
+
 if(isset($_POST["id_jeux_pret"]) && isset($_POST["pret_qui"])){
     var_dump("prete ".$_POST["id_jeux_pret"]." à ".$_POST["pret_qui"]."");
     $sql_up_pret = "UPDATE\n"
@@ -367,6 +368,18 @@ if(isset($_POST["id_jeux_pret"]) && isset($_POST["pret_qui"])){
         . "    `jeu_id` = '".$_POST["id_jeux_pret"]."';";
     //echo "<p>".$sql_up_pret."</p>";
     mysqli_query($ezine_db, $sql_up_pret) or ezine_mysql_die($ezine_db, $sql_up_pret);
+
+    $sql_up_pret2 = "INSERT INTO `jeu_stats`(\n"
+        . "    `jeu_stats_id`,\n"
+        . "    `jeu_stats_opération`,\n"
+        . "    `jeu_stats_date`,\n"
+        . "    `qui`,\n"
+        . "    `jeu_stats_quoi`,\n"
+        . "    `jeu_stats_objet`\n"
+        . ")\n"
+        . "VALUES(NULL, '3', NOW(), '', '', '".$_POST["id_jeux_pret"]."');";
+    //echo "<p>".$sql_up_pret2."</p>";
+    mysqli_query($ezine_db, $sql_up_pret2) or ezine_mysql_die($ezine_db, $sql_up_pret2);
 
 }
 $sql_liste_personnes_pret = "SELECT\n"
