@@ -1,6 +1,13 @@
 <?php
 
-
+/**
+ * Versions
+ * **********************************************************************************************************************
+ * 14 (27.11.2021)
+ * ajout de la 1ere version de la gestion des prets.
+ * **********************************************************************************************************************
+ **/
+$ezine_db=null;
 
 include_once dirname(__FILE__) . '/../structure/sql.php';
 include_once dirname(__FILE__) . '/../structure/header.php';
@@ -11,6 +18,71 @@ include_once dirname(__FILE__) . '/../function/bouton_classement.php';
 include_once dirname(__FILE__) . '/../function/slugify.php';
 include_once dirname(__FILE__) . '/../function/btn_click.php';
 
+
+if(isset($_POST["id_jeux_pret"]) && isset($_POST["pret_qui"])){
+    //var_dump("prete ".$_POST["id_jeux_pret"]." à ".$_POST["pret_qui"]."");
+    $sql_up_pret = "UPDATE\n"
+        . "    `jeu`\n"
+        . "SET\n"
+        . "    `jeu_est_pret` = '1',\n"
+        . "    `jeu_est_pret_qui` = '".$_POST["pret_qui"]."'\n"
+        . "WHERE\n"
+        . "    `jeu_id` = '".$_POST["id_jeux_pret"]."';";
+    //echo "<p>".$sql_up_pret."</p>";
+    mysqli_query($ezine_db, $sql_up_pret) or ezine_mysql_die($ezine_db, $sql_up_pret);
+
+    $sql_up_pret2 = "INSERT INTO `jeu_stats`(\n"
+        . "    `jeu_stats_id`,\n"
+        . "    `jeu_stats_opération`,\n"
+        . "    `jeu_stats_date`,\n"
+        . "    `qui`,\n"
+        . "    `jeu_stats_quoi`,\n"
+        . "    `jeu_stats_objet`\n"
+        . ")\n"
+        . "VALUES(NULL, '3', NOW(), '', '', '".$_POST["id_jeux_pret"]."');";
+    //echo "<p>".$sql_up_pret2."</p>";
+    mysqli_query($ezine_db, $sql_up_pret2) or ezine_mysql_die($ezine_db, $sql_up_pret2);
+
+}
+if(isset($_POST["retour"])){
+    $sql_up_retour = "UPDATE\n"
+        . "    `jeu`\n"
+        . "SET\n"
+        . "    `jeu_est_pret` = '0',\n"
+        . "    `jeu_est_pret_qui` = NULL\n"
+        . "WHERE\n"
+        . "    `jeu_id` = '".$_POST["retour"]."';";
+    //echo "<p>".$sql_up_retour."</p>";
+    mysqli_query($ezine_db, $sql_up_retour) or ezine_mysql_die($ezine_db, $sql_up_retour);
+
+    $sql_up_retour2 = "INSERT INTO `jeu_stats`(\n"
+        . "    `jeu_stats_id`,\n"
+        . "    `jeu_stats_opération`,\n"
+        . "    `jeu_stats_date`,\n"
+        . "    `qui`,\n"
+        . "    `jeu_stats_quoi`,\n"
+        . "    `jeu_stats_objet`\n"
+        . ")\n"
+        . "VALUES(NULL, '4', NOW(), '', '', '".$_POST["retour"]."');";
+    //echo "<p>".$sql_up_retour2."</p>";
+    mysqli_query($ezine_db, $sql_up_retour2) or ezine_mysql_die($ezine_db, $sql_up_retour2);
+}
+$sql_liste_personnes_pret = "SELECT\n"
+    . "    `personne_pret_id`,\n"
+    . "    `personne_pret_nom`,\n"
+    . "    `personne_pret_prenom`\n"
+    . "FROM\n"
+    . "    `personne_pret`;";
+//echo "<p>".$sql_liste_personnes_pret."</p>";
+$res_liste_personnes_pret = mysqli_query($ezine_db, $sql_liste_personnes_pret) or ezine_mysql_die($ezine_db, $sql_liste_personnes_pret);
+//$num_ticket=mysqli_insert_id($ezine_db);
+$nbre_liste_personnes_pret = mysqli_num_rows($res_liste_personnes_pret);
+$liste_personnes_pret = null;
+while ($bdd_liste_personnes_pret = mysqli_fetch_object($res_liste_personnes_pret)) {
+    $liste_personnes_pret .= '<option value="' . $bdd_liste_personnes_pret->personne_pret_id . '">' . $bdd_liste_personnes_pret->personne_pret_nom . ' ' . $bdd_liste_personnes_pret->personne_pret_prenom . '</option>';
+}
+
+
 $etat_jeux=array(
     array("nom"=>"own","bdd"=>"jeu_bgg_own","bdd_vue"=>"nb_own"),
     array("nom"=>"préorded","bdd"=>"jeu_bgg_preordered","bdd_vue"=>"nb_preordered"),
@@ -20,6 +92,7 @@ $etat_jeux=array(
     array("nom"=>"veux jouer","bdd"=>"jeu_bgg_wanttoplay","bdd_vue"=>"nb_wanttoplay"),
     array("nom"=>"veut acheter","bdd"=>"jeu_bgg_wanttobuy","bdd_vue"=>"nb_wanttobuy"),
     array("nom"=>"wishlist","bdd"=>"jeu_bgg_wishlist","bdd_vue"=>"nb_wishlist"),
+    array("nom"=>"prété","bdd"=>"jeu_est_pret","bdd_vue"=>"jeu_est_pret"),
 );
 $sql_filtre_own=null;
 foreach ($etat_jeux as $key=>$etat_jeu_actu){
@@ -103,8 +176,8 @@ foreach ($_POST as $key=>$post_actu){
             $quoi_update_array=explode("@",$key);
             var_dump(explode("@",$key));
             $array_inter=array_column($array_liste_collonne, 0);
-            foreach ($array_inter as $key=>$value){
-                $array_inter[$key]=slugify($value);
+            foreach ($array_inter as $key2=>$value){
+                $array_inter[$key2]=slugify($value);
             }
             $champ= $array_liste_collonne[array_search($quoi_update_array[2], $array_inter)][2];
 
@@ -123,9 +196,7 @@ if(isset($_POST["checkbox_boite"])){
         $ligne_actu_array=explode("@",$ligne_actu);
         //echo "<br>".$ligne_actu;
         if(isset($_POST["boite_".$ligne_actu_array[0]])){
-            if($ligne_actu_array[1]=="on"){
-                //echo "<br>".$ligne_actu." pas de changement on";
-            }else{
+            if($ligne_actu_array[1]!="on"){
                 //echo "<br>".$ligne_actu." off -> on";
                 $sql_up = "UPDATE `jeu` \n"
                     . "SET `jeu_est_boite` = '1' \n"
@@ -133,9 +204,7 @@ if(isset($_POST["checkbox_boite"])){
                 mysqli_query ($ezine_db, $sql_up) or ezine_mysql_die($ezine_db, $sql_up) ;
             }
         }else{
-            if($ligne_actu_array[1]=="off"){
-                //echo "<br>".$ligne_actu." pas de changement off";
-            }else{
+            if($ligne_actu_array[1]!="off"){
                 //echo "<br>".$ligne_actu." on -> off";
                 $sql_up2 = "UPDATE `jeu` \n"
                     . "SET `jeu_est_boite` = '0' \n"
@@ -263,7 +332,24 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
     //var_dump($bdd_liste_jeu->jeu_nom);
     $ligne_tableau.="<tr>";
     $ligne_tableau.='<th scope="row">'.$i.'</th>';
-    $ligne_tableau.='<td><a class="btn btn-primary btn-sm" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'" role="button"><i class="fas fa-info"></i></a></td>';
+    //$ligne_tableau.='<td><a class="btn btn-primary btn-sm" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'" role="button"><i class="fas fa-info"></i></a></td>';
+    $ligne_tableau.='<td>';
+    $ligne_tableau.='<div class="btn-group" role="group">';
+    $ligne_tableau.='<a class="btn btn-primary btn-sm" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'" role="button"><i class="fas fa-info"></i></a>';
+    if($bdd_liste_jeu->jeu_est_pret ==1){
+        $ligne_tableau.='<button type="submit" id="retour" name="retour" class="btn btn-primary btn-sm" value="'.$bdd_liste_jeu->jeu_id.'">';
+        $ligne_tableau.='<span class="fa-stack">';
+        $ligne_tableau.='<i class="fas fa-share fa-stack-1x"></i>';
+        $ligne_tableau.='<i class="fas fa-ban fa-stack-2x" style="color:Tomato"></i>';
+        $ligne_tableau.='</span>';
+        $ligne_tableau.='';
+        $ligne_tableau.='</button>';
+    }else{
+        $ligne_tableau.='<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#Modal_pret" data-id_jeu="'.$bdd_liste_jeu->jeu_id.'" data-titre_jeu="'.$bdd_liste_jeu->jeu_nom.'"><i class="fas fa-share"></i></button>';
+    }
+    $ligne_tableau.='</div>';
+    $ligne_tableau.='</td>';
+
     if($type_operation==2){
         foreach ($array_liste_collonne as $col_actu){
             if(isset($col_actu[3])){
@@ -330,7 +416,11 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
 
 
 
-//var_dump($_POST);
+var_dump($_POST);
+
+
+
+
 
 ?>
 <!--<a href="https://www.boardgamegeek.com/xmlapi2/collection?username=titich" >lien</a>--!>
@@ -518,13 +608,58 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                     ?>
                     </tbody>
                 </table>
+                <div class="modal fade" id="Modal_pret" tabindex="-1" aria-labelledby="Modal_pret_label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="Modal_pret_label">Prêt de jeux</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="id_jeux_pret" name="id_jeux_pret" value="XXX">
+                                <select class="form-select" id="pret_qui" name="pret_qui">
+
+                                    <option disabled selected hidden>Choisir une personne</option>
+                                    <?php echo $liste_personnes_pret; ?>
+
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 </main>
 
+<script type="text/javascript">
+    var Modal_pret = document.getElementById('Modal_pret')
+    Modal_pret.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var id_jeu = button.getAttribute('data-id_jeu')
+        var titre = button.getAttribute('data-titre_jeu')
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        //alert(recipient);
+        var modalTitle = Modal_pret.querySelector('.modal-title')
+        //var modalBodyInput = Modal_pret.querySelector('.recipient-name')
+        var modalHidden = document.getElementById("id_jeux_pret");
 
+        modalTitle.textContent = 'Prêt de ' + titre;
+        modalHidden.value = id_jeu;
+    })
+</script>
 <?php
+
+
 include_once dirname(__FILE__) . '/../js/dropdown_perso.php';
 
 include_once dirname(__FILE__) . '/../structure/footer.php';
