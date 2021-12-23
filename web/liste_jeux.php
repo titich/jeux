@@ -288,24 +288,35 @@ foreach ($array_liste_collonne as $col_actu){
     }
 }
 
-if(isset($_POST["r_editeur"])){
-    $sql_max_editeur = "SELECT\n"
-        . "    MAX(`boardgamepublisher_id`) AS `max_boardgamepublisher`\n"
-        . "FROM\n"
-        . "    `boardgamepublisher`;";
-    //echo "<p>".$sql_max_editeur."</p>";
-    $res_max_editeur = mysqli_query ($ezine_db, $sql_max_editeur) or ezine_mysql_die($ezine_db, $sql_max_editeur) ;
-    //$num_ticket=mysqli_insert_id($ezine_db);
-    $nbre_max_editeur=mysqli_num_rows($res_max_editeur);
-    $bdd_max_editeur = mysqli_fetch_object($res_max_editeur);
+$liste_lien=array(
+        array("editeur","boardgamepublisher"),
+        array("createur","designer"),
+        array("artist","artist"),
+);
+$sql_INNER=null;
 
-    if(is_numeric($_POST["r_editeur"]) && $_POST["r_editeur"]<= $bdd_max_editeur->max_boardgamepublisher){
-        $sql_liste_jeu_filtre.="AND `boardgamepublisher_id`= ".$_POST["r_editeur"]."\n";
+foreach ($liste_lien as $ll_actu){
+    if(isset($_POST["r_".$ll_actu[0]])){
+        $sql_max_editeur = "SELECT\n"
+            . "    MAX(`".$ll_actu[1]."_id`) AS `max_".$ll_actu[1]."`\n"
+            . "FROM\n"
+            . "    `".$ll_actu[1]."`;";
+        //echo "<p>".$sql_max_editeur."</p>";
+        $res_max_editeur = mysqli_query ($ezine_db, $sql_max_editeur) or ezine_mysql_die($ezine_db, $sql_max_editeur) ;
+        //$num_ticket=mysqli_insert_id($ezine_db);
+        $nbre_max_editeur=mysqli_num_rows($res_max_editeur);
+        $bdd_max_editeur = mysqli_fetch_object($res_max_editeur);
+
+        if(is_numeric($_POST["r_".$ll_actu[0]]) && $_POST["r_".$ll_actu[0]]<= $bdd_max_editeur->{"max_".$ll_actu[1]}){
+            $sql_liste_jeu_filtre.="AND `".$ll_actu[1]."_id`= ".$_POST["r_".$ll_actu[0]]."\n";
+
+            $sql_INNER.= "INNER JOIN `".$ll_actu[1]."_jeu` ON `".$ll_actu[1]."_jeu`.`jeu` = `jeu`.`jeu_id`\n";
+            $sql_INNER.= "INNER JOIN `".$ll_actu[1]."` ON `".$ll_actu[1]."`.`".$ll_actu[1]."_id` = `".$ll_actu[1]."_jeu`.`".$ll_actu[1]."`\n";
+
+        }
     }
-
-
-
 }
+
 
 
 
@@ -344,8 +355,7 @@ $ligne_tableau="";
 $i=1;
 $sql_liste_jeu="SELECT * \n"
     . "FROM `jeu`\n"
-    . "INNER JOIN `boardgamepublisher_jeu` ON `boardgamepublisher_jeu`.`jeu` = `jeu`.`jeu_id`\n"
-    . "INNER JOIN `boardgamepublisher` ON `boardgamepublisher`.`boardgamepublisher_id` = `boardgamepublisher_jeu`.`boardgamepublisher`\n"
+    . $sql_INNER." "
     . "WHERE 1\n"
     . $sql_liste_jeu_filtre." ".$sql_filtre_own."\n"
     . "ORDER BY ".$sql_liste_jeu_order_by." `jeu_bgg_averageweight` DESC,`jeu_bgg_yearpublished` DESC";

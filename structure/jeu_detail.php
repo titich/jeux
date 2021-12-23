@@ -87,30 +87,36 @@ $res_jeu_detail = mysqli_query ($ezine_db, $sql_jeu_detail) or ezine_mysql_die($
 $nbre_jeu_detail=mysqli_num_rows($res_jeu_detail);
 $bdd_jeu_detail = mysqli_fetch_object($res_jeu_detail);
 
-$sql_editeur = "SELECT `jeu`,`boardgamepublisher_id`,`boardgamepublisher_nom_en`,`boardgamepublisher_nom_fr` \n"
-    . "FROM `boardgamepublisher_jeu`\n"
-    . "left JOIN `boardgamepublisher` ON `boardgamepublisher`.`boardgamepublisher_id` = `boardgamepublisher_jeu`.`boardgamepublisher`\n"
-    . "WHERE `jeu` = ".$id."\n"
-    . "ORDER BY `boardgamepublisher_nom_en` ASC;";
+function data_cat($ezine_db,$id, $cat,$bdd){
+    $sql_editeur = "SELECT `jeu`,`".$bdd."_id`,`".$bdd."_nom_en`,`".$bdd."_nom_fr` \n"
+        . "FROM `".$bdd."_jeu`\n"
+        . "left JOIN `".$bdd."` ON `".$bdd."`.`".$bdd."_id` = `".$bdd."_jeu`.`".$bdd."`\n"
+        . "WHERE `jeu` = ".$id."\n"
+        . "ORDER BY `".$bdd."_nom_en` ASC;";
 //echo "<p>".$sql_editeur."</p>";
-$res_editeur = mysqli_query ($ezine_db, $sql_editeur) or ezine_mysql_die($ezine_db, $sql_editeur) ;
+    $res_editeur = mysqli_query ($ezine_db, $sql_editeur) or ezine_mysql_die($ezine_db, $sql_editeur) ;
 //$num_ticket=mysqli_insert_id($ezine_db);
-$nbre_editeur=mysqli_num_rows($res_editeur);
-$ligne_editeur=null;
-if($nbre_editeur > 1){
-    $ligne_editeur.= "<ul>";
-    while($bdd_editeur = mysqli_fetch_object($res_editeur)) {
-        //$ligne_editeur.= "<li>".$bdd_editeur->boardgamepublisher_nom_en."</li>";
-        $ligne_editeur.= '<li><button type="submit" name="r_editeur" value="'.$bdd_editeur->boardgamepublisher_id.'" class="btn btn-link" style="padding: 0px;">'.$bdd_editeur->boardgamepublisher_nom_en.'</button></li>';
-    }
-    $ligne_editeur.= "</ul>";
-}else{
-    $bdd_editeur = mysqli_fetch_object($res_editeur);
-    //$ligne_editeur.=$bdd_editeur->boardgamepublisher_nom_en;
-    $ligne_editeur.= '<button type="submit" name="r_editeur" value="'.$bdd_editeur->boardgamepublisher_id.'" class="btn btn-link" style="padding: 0px;">'.$bdd_editeur->boardgamepublisher_nom_en.'</button>';
-
+    $nbre_editeur=mysqli_num_rows($res_editeur);
+    $ligne_editeur=null;
+    if($nbre_editeur == 1){
+        $bdd_editeur = mysqli_fetch_object($res_editeur);
+        //$ligne_editeur.=$bdd_editeur->boardgamepublisher_nom_en;
+        $ligne_editeur.= '<button type="submit" name="r_'.$cat.'" value="'.$bdd_editeur->{$bdd . "_id"}.'" class="btn btn-link" style="padding: 0px;">'.$bdd_editeur->{$bdd . "_nom_en"}.'</button>';
+    }elseif($nbre_editeur > 1){
+        $ligne_editeur.= "<ul>";
+        while($bdd_editeur = mysqli_fetch_object($res_editeur)) {
+            //$ligne_editeur.= "<li>".$bdd_editeur->boardgamepublisher_nom_en."</li>";
+            $ligne_editeur.= '<li><button type="submit" name="r_'.$cat.'" value="'.$bdd_editeur->{$bdd."_id"}.'" class="btn btn-link" style="padding: 0px;">'.$bdd_editeur->{$bdd."_nom_en"}.'</button></li>';
+        }
+        $ligne_editeur.= "</ul>";
+    }else{}
+    return $ligne_editeur;
 }
-
+/*
+$ligne_editeur=data_cat($ezine_db,$id,"editeur","boardgamepublisher");
+$ligne_artist=data_cat($ezine_db,$id,"artist","artist");
+$ligne_createur=data_cat($ezine_db,$id,"createur","designer");*/
+//var_dump($ligne_editeur);
 
 function enlever_trait($txt){
     //var_dump($txt);
@@ -184,18 +190,33 @@ $data_array=array(
     array("nom"=>"Note","data"=>$bdd_jeu_detail->jeu_bgg_note, "logo" => "fas fa-crown"),
     array("nom"=>"Difficulté","data"=>$bdd_jeu_detail->jeu_bgg_averageweight, "logo" => "fas fa-balance-scale"),
     array("nom"=>"Durée","data"=>convertToHoursMins($bdd_jeu_detail->jeu_bgg_playingtime)."", "logo" => "fas fa-clock"),
-    array("nom"=>"éditeur","data"=>$ligne_editeur, "logo" => "far fa-copyright"),
+    array("nom"=>"éditeur","data"=>data_cat($ezine_db,$id,"editeur","boardgamepublisher"), "logo" => "far fa-copyright"),
+    array("nom"=>"Créateur","data"=>data_cat($ezine_db,$id,"createur","designer"), "logo" => "fas fa-hat-wizard"),
+    array("nom"=>"Artiste","data"=>data_cat($ezine_db,$id,"artist","artist"), "logo" => "fas fa-paint-brush"),
 );
+
+/*$ligne_editeur=data_cat($ezine_db,$id,"editeur","boardgamepublisher");
+$ligne_artist=data_cat($ezine_db,$id,"artist","artist");
+$ligne_createur=data_cat($ezine_db,$id,"createur","designer");*/
+
 
 $tableau_data=null;
 foreach ($data_array as $data_actu){
-    $tableau_data.='<tr data-bs-toggle="tooltip" data-bs-placement="left" title="'.$data_actu["nom"].'">';
-    $tableau_data.='<th scope="row" style="text-align: right;"><i class="'.$data_actu["logo"].'"></i></th>';
-    //$tableau_data.='<th scope="row" style="text-align: right;"><i class="'.$data_actu["logo"].'"></i>'.$data_actu["nom"].'</th>';
-    //$tableau_data.='<th scope="row" style="text-align: right;"><button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="left" title="Tooltip on left">Tooltip on left</button></th>';
-    $tableau_data.='<td  style="text-align: left;">'.$data_actu["data"].'</td>';
-    $tableau_data.='</tr>';
-    $tableau_data.='';
+    //var_dump("<br>");
+    //echo "<br>";
+    //var_dump(empty($data_actu["data"]));
+    //var_dump($data_actu["data"]);
+    //var_dump(is_null($data_actu["data"]));
+
+    if(!is_null($data_actu["data"])){
+        $tableau_data.='<tr data-bs-toggle="tooltip" data-bs-placement="left" title="'.$data_actu["nom"].'">';
+        $tableau_data.='<th scope="row" style="text-align: right;"><i class="'.$data_actu["logo"].'"></i></th>';
+        //$tableau_data.='<th scope="row" style="text-align: right;"><i class="'.$data_actu["logo"].'"></i>'.$data_actu["nom"].'</th>';
+        //$tableau_data.='<th scope="row" style="text-align: right;"><button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="left" title="Tooltip on left">Tooltip on left</button></th>';
+        $tableau_data.='<td  style="text-align: left;">'.$data_actu["data"].'</td>';
+        $tableau_data.='</tr>';
+        $tableau_data.='';
+    }
 }
 
 $description=null;
