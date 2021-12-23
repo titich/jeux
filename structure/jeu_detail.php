@@ -87,7 +87,7 @@ $res_jeu_detail = mysqli_query ($ezine_db, $sql_jeu_detail) or ezine_mysql_die($
 $nbre_jeu_detail=mysqli_num_rows($res_jeu_detail);
 $bdd_jeu_detail = mysqli_fetch_object($res_jeu_detail);
 
-$sql_editeur = "SELECT `jeu`,`boardgamepublisher_nom_en`,`boardgamepublisher_nom_fr` \n"
+$sql_editeur = "SELECT `jeu`,`boardgamepublisher_id`,`boardgamepublisher_nom_en`,`boardgamepublisher_nom_fr` \n"
     . "FROM `boardgamepublisher_jeu`\n"
     . "left JOIN `boardgamepublisher` ON `boardgamepublisher`.`boardgamepublisher_id` = `boardgamepublisher_jeu`.`boardgamepublisher`\n"
     . "WHERE `jeu` = ".$id."\n"
@@ -100,12 +100,15 @@ $ligne_editeur=null;
 if($nbre_editeur > 1){
     $ligne_editeur.= "<ul>";
     while($bdd_editeur = mysqli_fetch_object($res_editeur)) {
-        $ligne_editeur.= "<li>".$bdd_editeur->boardgamepublisher_nom_en."</li>";
+        //$ligne_editeur.= "<li>".$bdd_editeur->boardgamepublisher_nom_en."</li>";
+        $ligne_editeur.= '<li><button type="submit" name="r_editeur" value="'.$bdd_editeur->boardgamepublisher_id.'" class="btn btn-link" style="padding: 0px;">'.$bdd_editeur->boardgamepublisher_nom_en.'</button></li>';
     }
     $ligne_editeur.= "</ul>";
 }else{
     $bdd_editeur = mysqli_fetch_object($res_editeur);
-    $ligne_editeur.=$bdd_editeur->boardgamepublisher_nom_en;
+    //$ligne_editeur.=$bdd_editeur->boardgamepublisher_nom_en;
+    $ligne_editeur.= '<button type="submit" name="r_editeur" value="'.$bdd_editeur->boardgamepublisher_id.'" class="btn btn-link" style="padding: 0px;">'.$bdd_editeur->boardgamepublisher_nom_en.'</button>';
+
 }
 
 
@@ -321,7 +324,9 @@ while($bdd_graph_cat = mysqli_fetch_object($res_graph_cat)){
                         <div >
                             <table class="table">
                                 <tbody>
+                                <form role="form" action="../web/liste_jeux.php" method="post" enctype="multipart/form-data" name="form_recherche">
                                 <?php echo $tableau_data; ?>
+                                </form>
                                 </tbody>
                             </table>
                         </div>
@@ -361,6 +366,16 @@ while($bdd_graph_cat = mysqli_fetch_object($res_graph_cat)){
                             ?>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h1 class="card-title">details</h1>
+                </div>
+                <div class="card-body">
+                    <figure class="highcharts-figure">
+                        <div id="graph3"></div>
+                    </figure>
                 </div>
             </div>
             <div class="card mt-3">

@@ -19,6 +19,8 @@ include_once dirname(__FILE__) . '/../function/slugify.php';
 include_once dirname(__FILE__) . '/../function/btn_click.php';
 
 
+//$_POST["r_editeur"]='22';
+
 if(isset($_POST["id_jeux_pret"]) && isset($_POST["pret_qui"])){
     //var_dump("prete ".$_POST["id_jeux_pret"]." à ".$_POST["pret_qui"]."");
     $sql_up_pret = "UPDATE\n"
@@ -286,6 +288,25 @@ foreach ($array_liste_collonne as $col_actu){
     }
 }
 
+if(isset($_POST["r_editeur"])){
+    $sql_max_editeur = "SELECT\n"
+        . "    MAX(`boardgamepublisher_id`) AS `max_boardgamepublisher`\n"
+        . "FROM\n"
+        . "    `boardgamepublisher`;";
+    //echo "<p>".$sql_max_editeur."</p>";
+    $res_max_editeur = mysqli_query ($ezine_db, $sql_max_editeur) or ezine_mysql_die($ezine_db, $sql_max_editeur) ;
+    //$num_ticket=mysqli_insert_id($ezine_db);
+    $nbre_max_editeur=mysqli_num_rows($res_max_editeur);
+    $bdd_max_editeur = mysqli_fetch_object($res_max_editeur);
+
+    if(is_numeric($_POST["r_editeur"]) && $_POST["r_editeur"]<= $bdd_max_editeur->max_boardgamepublisher){
+        $sql_liste_jeu_filtre.="AND `boardgamepublisher_id`= ".$_POST["r_editeur"]."\n";
+    }
+
+
+
+}
+
 
 
 //var_dump($_POST);
@@ -297,7 +318,7 @@ foreach ($array_liste_collonne as $col_actu){
 
 //$test=array(1,2,3,4);
 //var_dump($test);
-//var_dump(simplexml_load_string('https://www.boardgamegeek.com/xmlapi2/collection?username=titich'));
+//var_dump(simplexml_load_string("https://www.boardgamegeek.com/xmlapi2/collection?username=titich'));
 
 /*$sql="SELECT * FROM jeu";
 if ($result = mysqli_query($ezine_db,$sql )) {
@@ -317,10 +338,14 @@ https://www.rpggeek.com/xmlapi2/
 https://www.videogamegeek.com/xmlapi2/
  */
 
+// . "    AND `boardgamepublisher`.`boardgamepublisher_nom_en`= \'iello\'\n"
+
 $ligne_tableau="";
 $i=1;
 $sql_liste_jeu="SELECT * \n"
     . "FROM `jeu`\n"
+    . "INNER JOIN `boardgamepublisher_jeu` ON `boardgamepublisher_jeu`.`jeu` = `jeu`.`jeu_id`\n"
+    . "INNER JOIN `boardgamepublisher` ON `boardgamepublisher`.`boardgamepublisher_id` = `boardgamepublisher_jeu`.`boardgamepublisher`\n"
     . "WHERE 1\n"
     . $sql_liste_jeu_filtre." ".$sql_filtre_own."\n"
     . "ORDER BY ".$sql_liste_jeu_order_by." `jeu_bgg_averageweight` DESC,`jeu_bgg_yearpublished` DESC";
@@ -416,7 +441,7 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
 
 
 
-var_dump($_POST);
+//var_dump($_POST);
 
 
 
