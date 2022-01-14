@@ -110,6 +110,7 @@ function data_cat($ezine_db,$id, $cat,$bdd){
         }
         $ligne_editeur.= "</ul>";
     }else{}
+    //return $nbre_editeur;
     return $ligne_editeur;
 }
 /*

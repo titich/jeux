@@ -3,6 +3,9 @@
 /**
  * Versions
  * **********************************************************************************************************************
+ * 15 (14.01.2022)
+ * ajout de la possibilité de rajouter des medias
+ * **********************************************************************************************************************
  * 14 (27.11.2021)
  * ajout de la 1ere version de la gestion des prets.
  * **********************************************************************************************************************
@@ -20,6 +23,9 @@ include_once dirname(__FILE__) . '/../function/btn_click.php';
 
 
 //$_POST["r_editeur"]='22';
+//var_dump($_POST);
+//var_dump($_FILES);
+
 
 if(isset($_POST["id_jeux_pret"]) && isset($_POST["pret_qui"])){
     //var_dump("prete ".$_POST["id_jeux_pret"]." à ".$_POST["pret_qui"]."");
@@ -144,6 +150,8 @@ $type_operation=1;// liste de jeux standard
 if(isset($_GET["p"])){
     if($_GET["p"]=="poids"){
         $type_operation=2;// completer poids et taille des jeux
+    }elseif($_GET["p"]=="media"){
+        $type_operation=3;// completer media pour les jeux
     }
 }
 
@@ -151,23 +159,79 @@ if(isset($_GET["p"])){
 //var_dump(URL_PAR);
 
 
-if($type_operation==2){
+if($type_operation==2){//poids
     $array_liste_collonne=array(
+            //structure//
+            // titre, ordre classement, champ bdd, champ bdd data recuperée, table si differente, type si table differente, type//
+            //type //
+            //  - aff_txt = affichage txt
+
+            //  - up_URL
+            //  - up_media = fichier a cherger
+
         array("nom","ASC","jeu_nom",null),
         array("x","ASC","jeu_x","jeu_bgg_width"),
         array("y","ASC","jeu_y","jeu_bgg_depth"),
         array("z","ASC","jeu_z","jeu_bgg_length"),
         array("poids","ASC","jeu_poids","jeu_bgg_weight"),
     );
+}elseif($type_operation==3){//media
+    $array_liste_collonne=array(
+        array("nom","ASC","jeu_nom",null,null,null,"aff_txt"),
+        array("règles","ASC","jeu_x",null,'jeu_media',1,"up_media"),
+        array("fichiers 3d","ASC","jeu_y",null,'jeu_media',3,"up_media"),
+        array("autre","ASC","jeu_z",null,'jeu_media',4,"up_media"),
+    );
+}elseif($type_operation==4){//liens
+    $array_liste_collonne=array(
+        array("nom","ASC","jeu_nom",null,null,null,"aff_txt"),
+        array("videorègles","ASC","jeu_y",null,'jeu_media',2,"up_URL"),
+        array("fiche jeu","ASC","jeu_y",null,'jeu_media',2,"up_URL"),
+
+    );
 }else{// valable pour le operation 1
     $array_liste_collonne=array(
-        array("nom","ASC","jeu_nom"),
+        array("nom","ASC","jeu_nom",null),
         array("année prod.","ASC","jeu_bgg_yearpublished"),
         array("difficulté","DESC","jeu_bgg_averageweight"),
         array("note","DESC","jeu_bgg_note_bayesienne"),
         array("populatité","DESC","jeu_coolitude"),
     );
 
+}
+
+foreach ($_FILES as $key=>$file_actu){
+    if($file_actu["size"][0]==0){
+        unset($_FILES[$key]);
+    }else{
+        var_dump("<br>");
+        var_dump($key);
+        var_dump("<br>");
+        var_dump($_FILES[$key]);
+        foreach ($file_actu["size"] as $nb=>$actu2){
+            if ($_FILES[$key]['error'][$nb]) {
+                switch ($_FILES[$key]['error'][$nb]){
+                    case 1: // UPLOAD_ERR_INI_SIZE
+                        echo "Le fichier dépasse la limite autorisée par le serveur (fichier php.ini) !";
+                        break;
+                    case 2: // UPLOAD_ERR_FORM_SIZE
+                        echo "Le fichier dépasse la limite autorisée dans le formulaire HTML !";
+                        break;
+                    case 3: // UPLOAD_ERR_PARTIAL
+                        echo "L'envoi du fichier a été interrompu pendant le transfert !";
+                        break;
+                    case 4: // UPLOAD_ERR_NO_FILE
+                        echo "Le fichier que vous avez envoyé a une taille nulle !";
+                        break;
+                }
+            }else{
+                $nom = $_FILES[$key]['tmp_name'][$nb];
+                $nomdestination = '../test/'.rand().'.jpg';
+                move_uploaded_file($nom, $nomdestination);
+                //move_uploaded_file($_FILES["photo"]["tmp_name"], "upload/" . $_FILES["photo"]["name"]);
+            }
+        }
+    }
 }
 
 foreach ($_POST as $key=>$post_actu){
@@ -320,7 +384,7 @@ foreach ($liste_lien as $ll_actu){
 
 
 
-//var_dump($_POST);
+
 /*}else{
     var_dump("existe pas");
 }*/
@@ -425,7 +489,24 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                     <input id="checkbox_boite" name="checkbox_boite[]" type="hidden" value="'.$bdd_liste_jeu->jeu_id.'@'.$bouton_cheked_etat.'">
                 </div>     
             </td>';
-    }else{
+    }elseif($type_operation==3){
+        //var_dump($array_liste_collonne);
+        foreach ($array_liste_collonne as $col_actu){
+            //$ligne_tableau.='<td>'.$bdd_liste_jeu->{$col_actu[2]}.'</td>';
+            //var_dump($col_actu);
+            if($col_actu[6]=="aff_txt" and (is_null($col_actu[4]) or $col_actu[4]=="jeu")){
+                $ligne_tableau.='<td>'.$bdd_liste_jeu->{$col_actu[2]}.'</td>';
+
+            }elseif($col_actu[6]=="up_media"){
+                $ligne_tableau.='<td>';
+                $ligne_tableau.='<input class="form-control" type="file" name ="data@'.$bdd_liste_jeu->jeu_id.'@'.slugify($col_actu[0]).'[]" multiple>';
+                $ligne_tableau.='</td>';
+            }else{
+                $ligne_tableau.='<td>'.$col_actu[2].'/'.$col_actu[3].'/'.$col_actu[4].'/'.$col_actu[5].'</td>';
+            }
+
+        }
+    } else{
         foreach ($array_liste_collonne as $col_actu){
             $ligne_tableau.='<td>'.$bdd_liste_jeu->{$col_actu[2]}.'</td>';
         }
