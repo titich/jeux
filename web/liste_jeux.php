@@ -176,12 +176,19 @@ if($type_operation==2){//poids
         array("poids","ASC","jeu_poids","jeu_bgg_weight"),
     );
 }elseif($type_operation==3){//media
-    $array_liste_collonne=array(
-        array("nom","ASC","jeu_nom",null,null,null,"aff_txt"),
-        array("règles","ASC","jeu_x",null,'jeu_media',1,"up_media"),
-        array("fichiers 3d","ASC","jeu_y",null,'jeu_media',3,"up_media"),
-        array("autre","ASC","jeu_z",null,'jeu_media',4,"up_media"),
-    );
+    $array_liste_collonne=array(array("nom","ASC","jeu_nom",null,null,null,"aff_txt"));
+    $sql_liste_fichier = "SELECT `jeu_media_type_id`,`jeu_media_type_nom_fr`\n"
+        . "FROM `jeu_media_type` \n"
+        . "WHERE `jeu_media_type_type` = 'fichier';";
+    //echo "<p>".$sql_liste_fichier."</p>";
+    $res_liste_fichier = mysqli_query ($ezine_db, $sql_liste_fichier) or ezine_mysql_die($ezine_db, $sql_liste_fichier) ;
+//$num_ticket=mysqli_insert_id($ezine_db);
+    $nbre_liste_fichier=mysqli_num_rows($res_liste_fichier);
+    while($bdd_liste_fichier = mysqli_fetch_object($res_liste_fichier)){
+        $array_liste_collonne[]=array($bdd_liste_fichier->jeu_media_type_nom_fr,"ASC","jeu_media_fichier",null,'jeu_media',$bdd_liste_fichier->jeu_media_type_id,"up_media");
+    }
+
+
 }elseif($type_operation==4){//liens
     $array_liste_collonne=array(
         array("nom","ASC","jeu_nom",null,null,null,"aff_txt"),
@@ -204,10 +211,10 @@ foreach ($_FILES as $key=>$file_actu){
     if($file_actu["size"][0]==0){
         unset($_FILES[$key]);
     }else{
-        var_dump("<br>");
-        var_dump($key);
-        var_dump("<br>");
-        var_dump($_FILES[$key]);
+        //var_dump("<br>");
+        //var_dump($key);
+        //var_dump("<br>");
+        //var_dump($_FILES[$key]);
         foreach ($file_actu["size"] as $nb=>$actu2){
             if ($_FILES[$key]['error'][$nb]) {
                 switch ($_FILES[$key]['error'][$nb]){
@@ -225,10 +232,89 @@ foreach ($_FILES as $key=>$file_actu){
                         break;
                 }
             }else{
+                //var_dump("<hr>");
+                //var_dump($nb);
+                //var_dump("<hr>");
+                $info_actu=explode("@",$key);
+                $sql_info_actu = "SELECT\n"
+                    . "    `jeu_id`,\n"
+                    . "    `jeu_nom`\n"
+                    . "FROM `jeu`\n"
+                    . "WHERE `jeu_id` = ".$info_actu[1].";";
+                //echo "<p>".$sql_info_actu."</p>";
+                $res_info_actu = mysqli_query ($ezine_db, $sql_info_actu) or ezine_mysql_die($ezine_db, $sql_info_actu) ;
+                //$num_ticket=mysqli_insert_id($ezine_db);
+                $nbre_info_actu=mysqli_num_rows($res_info_actu);
+                $bdd_info_actu = mysqli_fetch_object($res_info_actu);
+                $dossier_jeu= str_replace("-","_",slugify($bdd_info_actu->jeu_nom));
+
+                $col_recherche=array_column($array_liste_collonne, 0);
+                foreach ($col_recherche as $key2 => $col_r_actu){
+                    $col_recherche[$key2]=slugify($col_r_actu);
+                }
+
+                $id_jeu_media_type=$array_liste_collonne[array_search($info_actu[2],$col_recherche)][5];
+                //var_dump("<hr>");
+                //var_dump(array_column($array_liste_collonne, 0));
+                //var_dump("<hr>");
+                //var_dump($id_jeu_media_type);
+                //var_dump("<hr>");
+
+                //var_dump($dossier_jeu);
+                $path = "../media/".$dossier_jeu."/";
+                if (!is_dir($path)) {
+                    mkdir($path, 0777, true);
+                }
+
+
                 $nom = $_FILES[$key]['tmp_name'][$nb];
-                $nomdestination = '../test/'.rand().'.jpg';
+                //$extention= explode("/",$_FILES[$key]['type'][$nb])[1]; // pas genial
+                $info_extention = new SplFileInfo($_FILES[$key]['name'][$nb]);
+                $extention = $info_extention->getExtension();
+                $fichier_nom=$info_actu[2]."_".$dossier_jeu.".".$extention;
+
+                //$nomdestination = '../test/'.rand().'.jpg';
+                $nomdestination = $path.$fichier_nom;
                 move_uploaded_file($nom, $nomdestination);
                 //move_uploaded_file($_FILES["photo"]["tmp_name"], "upload/" . $_FILES["photo"]["name"]);
+
+                $sql_log_insert = "INSERT INTO `jeu_stats`(\n"
+                    . "    `jeu_stats_id`,\n"
+                    . "    `jeu_stats_opération`,\n"
+                    . "    `jeu_stats_date`,\n"
+                    . "    `qui`,\n"
+                    . "    `jeu_stats_quoi`,\n"
+                    . "    `jeu_stats_quoi_details`,\n"
+                    . "    `jeu_stats_objet`\n"
+                    . ")\n"
+                    . "VALUES(NULL,'5',NOW(), NULL, '".$info_actu[2]."', '".$fichier_nom."', '".$info_actu[1]."');";
+                //echo "<p>".$sql_log_insert."</p>";
+                mysqli_query ($ezine_db, $sql_log_insert) or ezine_mysql_die($ezine_db, $sql_log_insert) ;
+
+                $sql_insert_media = "INSERT INTO `jeu_media`(\n"
+                    . "    `jeu_media_id`,\n"
+                    . "    `jeu`,\n"
+                    . "    `jeu_media_type`,\n"
+                    . "    `jeu_media_dossier`,\n"
+                    . "    `jeu_media_fichier`,\n"
+                    . "    `jeu_media_MIME`,\n"
+                    . "    `jeu_media_taille`,\n"
+                    . "    `jeu_media_extention`,\n"
+                    . "    `jeu_media_lien`\n"
+                    . ")\n"
+                    . "VALUES(\n"
+                    . "    NULL,\n"//jeu_media_id
+                    . "    '".$info_actu[1]."',\n"//jeu
+                    . "    '".$id_jeu_media_type."',\n" //jeu_media_type // type a determiner
+                    . "    '".$path."',\n"//jeu_media_dossier
+                    . "    '".$fichier_nom."',\n"//jeu_media_fichier
+                    . "    '".$_FILES[$key]['type'][$nb]."',\n"//jeu_media_MIME
+                    . "    '".$_FILES[$key]['size'][$nb]."',\n"//jeu_media_taille
+                    . "    '".$extention."',\n"//jeu_media_extention
+                    . "    NULL\n"//jeu_media_lien
+                    . ");";
+                mysqli_query ($ezine_db, $sql_insert_media) or ezine_mysql_die($ezine_db, $sql_insert_media) ;
+
             }
         }
     }
