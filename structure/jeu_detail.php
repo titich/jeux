@@ -275,6 +275,69 @@ while($bdd_liste_extention = mysqli_fetch_object($res_liste_extention)){
 
     $extention_data_own.='';
 }
+
+$affichage_media=null;
+$media_last=null;
+
+$sql_liste_jeu = "SELECT `jeu_media_type`,`jeu_media_type_nom_fr`, `jeu_media_dossier`,`jeu_media_fichier`,`jeu_media_MIME`\n"
+    . "FROM `jeu_media` \n"
+    . "LEFT JOIN `jeu_media_type` ON `jeu_media_type`.`jeu_media_type_id`=`jeu_media`.`jeu_media_type`\n"
+    . "WHERE `jeu` =".$id.";";
+//echo "<p>".$sql_liste_jeu."</p>";
+$res_liste_jeu = mysqli_query ($ezine_db, $sql_liste_jeu) or ezine_mysql_die($ezine_db, $sql_liste_jeu) ;
+//$num_ticket=mysqli_insert_id($ezine_db);
+$nbre_liste_jeu=mysqli_num_rows($res_liste_jeu);
+if($nbre_liste_jeu>=1){
+    while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
+        if($media_last != $bdd_liste_jeu->jeu_media_type){
+            if(!is_null($affichage_media)){
+                $affichage_media.='<hr>';
+            }
+            $affichage_media.='<h5 class="card-title">'.$bdd_liste_jeu->jeu_media_type_nom_fr.'</h5>';
+        }else{
+            $affichage_media.=' ';
+        }
+        $affichage_media.='<a role="button" class="btn btn-outline-secondary" href="'.$bdd_liste_jeu->jeu_media_dossier.$bdd_liste_jeu->jeu_media_fichier.'">';
+        //$affichage_media.='<a class="btn btn-outline-secondary" href="#" role="button"><h3><i class="far fa-file-pdf"></i></h3></a> ';
+
+
+        //var_dump($bdd_liste_jeu->jeu_media_MIME);
+
+        switch ($bdd_liste_jeu->jeu_media_MIME) {
+            case "application/pdf":
+                $affichage_media.='<h3><i class="far fa-file-pdf"></i></h3>';
+                break;
+            case "image/jpg":
+            case "image/png":
+                $affichage_media.='<h3><i class="far fa-file-image"></i></h3>';
+                break;
+            case "application/word":
+                $affichage_media.='<h3><i class="far fa-file-word"></i></h3>';
+                break;
+            case "application/powerpoint":
+                $affichage_media.='<h3><i class="far fa-file-powerpoint"></i></h3>';
+                break;
+            case "application/excel":
+                $affichage_media.='<h3><i class="far fa-file-excel"></i></h3>';
+                break;
+            case "sound/mp3":
+                $affichage_media.='<h3><i class="far fa-file-audio"></i></h3>';
+                break;
+            case "application/zip":
+                $affichage_media.='<h3><i class="far fa-file-archive"></i></h3>';
+                break;
+            default:
+                $affichage_media.='<h3><i class="far fa-file"></i></h3>';
+                break;
+        }
+        $affichage_media.='</a>';
+
+        $media_last=$bdd_liste_jeu->jeu_media_type;
+    }
+}
+
+
+
 $graph_data=null;
 $sql_graph_cat = "SELECT `evolution_note_type`,`evolution_note_type_nom`,count(*) as nbre,`jeu_bgg_note_bayesienne`,`evolution_note_type_sens_graph`\n"
     . "FROM `evolution_note` \n"
@@ -390,16 +453,16 @@ while($bdd_graph_cat = mysqli_fetch_object($res_graph_cat)){
                     </div>
                 </div>
             </div>
+            <?php if(!is_null($affichage_media)){ ?>
             <div class="card mt-3">
                 <div class="card-header">
-                    <h1 class="card-title">details</h1>
+                    <h1 class="card-title">Média</h1>
                 </div>
                 <div class="card-body">
-                    <figure class="highcharts-figure">
-                        <div id="graph3"></div>
-                    </figure>
+                    <?php echo $affichage_media; ?>
                 </div>
             </div>
+            <?php } ?>
             <div class="card mt-3">
                 <div class="card-header">
                     <h1 class="card-title">details</h1>

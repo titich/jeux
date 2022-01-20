@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/gregwar/cache" />
       <excludeFolder url="file://$MODULE_DIR$/STL" />
       <excludeFolder url="file://$MODULE_DIR$/structure/old" />
+      <excludeFolder url="file://$MODULE_DIR$/media" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
