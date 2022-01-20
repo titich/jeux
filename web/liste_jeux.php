@@ -103,6 +103,7 @@ $etat_jeux=array(
     array("nom"=>"prété","bdd"=>"jeu_est_pret","bdd_vue"=>"jeu_est_pret"),
 );
 $sql_filtre_own=null;
+//var_dump($etat_jeux);
 foreach ($etat_jeux as $key=>$etat_jeu_actu){
     $sql_nb_cat = "SELECT `".$etat_jeu_actu["bdd_vue"]."` AS `nb`  \n"
         . "FROM `v_nb_cat`;";
@@ -514,6 +515,15 @@ $res_liste_jeu = mysqli_query ($ezine_db, $sql_liste_jeu) or ezine_mysql_die($ez
 //$num_ticket=mysqli_insert_id($ezine_db);
 $nbre_liste_jeu=mysqli_num_rows($res_liste_jeu);
 while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
+    $sql_cnt_media = "SELECT COUNT(*) as `nb`  \n"
+        . "FROM `jeu_media`\n"
+        . "WHERE `jeu` = ".$bdd_liste_jeu->jeu_id.";";
+    //echo "<p>".$sql_cnt_media."</p>";
+    $res_cnt_media = mysqli_query ($ezine_db, $sql_cnt_media) or ezine_mysql_die($ezine_db, $sql_cnt_media) ;
+    //$num_ticket=mysqli_insert_id($ezine_db);
+    $nbre_cnt_media=mysqli_num_rows($res_cnt_media);
+    $bdd_cnt_media = mysqli_fetch_object($res_cnt_media);
+
     //var_dump($bdd_liste_jeu->jeu_nom);
     $ligne_tableau.="<tr>";
     $ligne_tableau.='<th scope="row">'.$i.'</th>';
@@ -598,13 +608,30 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
         }
     }
     //$ligne_tableau.='<td><a href="https://www.boardgamegeek.com/xmlapi2/thing?id='.$bdd_liste_jeu->jeu_bgg_id.'&stats=1" >'.$bdd_liste_jeu->jeu_bgg_id.'</a> </td>';
+    if($type_operation==1){
+        $ligne_tableau.='<td>';
+        if($bdd_cnt_media->nb!=0){
+            $ligne_tableau.='<button type="button" class="btn btn-sm btn-outline-secondary">';
+            //$ligne_tableau.='<span class="badge rounded-pill bg-secondary">';
+            $ligne_tableau.='';
+            $ligne_tableau.=$bdd_cnt_media->nb;
+            $ligne_tableau.=' ';
+            //$ligne_tableau.='</span>';
+            $ligne_tableau.='<i class="far fa-file"></i>';
+            $ligne_tableau.='</button>';
 
-    $ligne_tableau.='<td>
-        <a target="_blank" type="button" class="btn btn-bgg btn-sm" href="https://www.boardgamegeek.com/boardgame/'.$bdd_liste_jeu->jeu_bgg_id.'/" >
-            <img src="../vendor/BGG/navbar-logo-bgg-b2.svg" alt="lien BGG" height="15px"  />
-        </a>
-    </td>';
 
+
+
+        }
+        $ligne_tableau.='</td>';
+
+        $ligne_tableau.='<td>';
+        $ligne_tableau.='<a target="_blank" type="button" class="btn btn-bgg btn-sm" href="https://www.boardgamegeek.com/boardgame/'.$bdd_liste_jeu->jeu_bgg_id.'/" >';
+        $ligne_tableau.='<img src="../vendor/BGG/navbar-logo-bgg-b2.svg" alt="lien BGG" height="15px"  />';
+        $ligne_tableau.='</a>';
+        $ligne_tableau.='</td>';
+    }
     $ligne_tableau.="</tr>";
 
 
@@ -798,9 +825,13 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
                         if($type_operation==2){
                             echo '<th scope="col">Est boite?</th>';
                         }
+                        if($type_operation==1){
+                            echo '<th scope="col"></th>';
+                            echo '<th scope="col">Lien BGG</th>';
+                        }
                         ?>
 
-                        <th scope="col">Lien BGG</th>
+
 
                     </tr>
                     </thead>
