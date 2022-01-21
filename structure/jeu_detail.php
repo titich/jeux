@@ -297,7 +297,7 @@ if($nbre_liste_jeu>=1){
         }else{
             $affichage_media.=' ';
         }
-        $affichage_media.='<a role="button" class="btn btn-outline-secondary" href="'.$bdd_liste_jeu->jeu_media_dossier.$bdd_liste_jeu->jeu_media_fichier.'">';
+        $affichage_media.='<a role="button" class="btn btn-outline-secondary" href="'.$bdd_liste_jeu->jeu_media_dossier.$bdd_liste_jeu->jeu_media_fichier.'" target="_blank">';
         //$affichage_media.='<a class="btn btn-outline-secondary" href="#" role="button"><h3><i class="far fa-file-pdf"></i></h3></a> ';
 
 
@@ -454,14 +454,16 @@ while($bdd_graph_cat = mysqli_fetch_object($res_graph_cat)){
                 </div>
             </div>
             <?php if(!is_null($affichage_media)){ ?>
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h1 class="card-title">Média</h1>
+            <balise id="media">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h1 class="card-title">Média</h1>
+                    </div>
+                    <div class="card-body">
+                        <?php echo $affichage_media; ?>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <?php echo $affichage_media; ?>
-                </div>
-            </div>
+            </balise>
             <?php } ?>
             <div class="card mt-3">
                 <div class="card-header">

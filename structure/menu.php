@@ -37,6 +37,7 @@ $tot_a_faire = array_sum(array_column($a_faire, 'nbre_a_faire'));
                         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../web/liste_jeux.php?p=poids"><li class="d-flex justify-content-between align-items-center">Écrire poids<?php echo $a_faire[0]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../web/description.php"><li class="d-flex justify-content-between align-items-center">Description<?php echo $a_faire[1]["badge"]; ?></li></a>
+                            <a class="dropdown-item" href="../web/liste_jeux.php?p=media"><li class="d-flex justify-content-between align-items-center">Media<?php echo $a_faire[2]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../auto/bgg_completion.php" target="_blank"><li class="d-flex justify-content-between align-items-center">Mise à jour</li></a>
                         </ul>
                     </li>
