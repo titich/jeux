@@ -611,7 +611,7 @@ while($bdd_liste_jeu = mysqli_fetch_object($res_liste_jeu)){
     if($type_operation==1){
         $ligne_tableau.='<td>';
         if($bdd_cnt_media->nb!=0){
-            $ligne_tableau.='<button type="button" class="btn btn-sm btn-outline-secondary">';
+            $ligne_tableau.='<a role="button" class="btn btn-sm btn-outline-secondary" href="../structure/jeu_detail.php?id='.$bdd_liste_jeu->jeu_id.'#media">';
             //$ligne_tableau.='<span class="badge rounded-pill bg-secondary">';
             $ligne_tableau.='';
             $ligne_tableau.=$bdd_cnt_media->nb;
