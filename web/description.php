@@ -90,6 +90,9 @@ if($nbre_requete!=0){
     <main>
         <div class="position-relative overflow-hidden bg-light">
             <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title"><?php echo $bdd_requete->jeu_nom; ?></h1>
+                </div>
                 <div class="card-body">
                     <form role="form" action="<?php echo FILE; ?>" method="post" enctype="multipart/form-data" name="form_1">
                         <fieldset disabled>
