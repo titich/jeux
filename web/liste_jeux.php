@@ -272,10 +272,19 @@ foreach ($_FILES as $key=>$file_actu){
                 //$extention= explode("/",$_FILES[$key]['type'][$nb])[1]; // pas genial
                 $info_extention = new SplFileInfo($_FILES[$key]['name'][$nb]);
                 $extention = $info_extention->getExtension();
+
                 $fichier_nom=$info_actu[2]."_".$dossier_jeu.".".$extention;
 
                 //$nomdestination = '../test/'.rand().'.jpg';
                 $nomdestination = $path.$fichier_nom;
+                $i=0;
+                while (file_exists($nomdestination)) {
+                    $i++;
+                    //echo "Le fichier $nomdestination existe.";
+                    $fichier_nom=$info_actu[2]."_".$dossier_jeu."_".$i.".".$extention;
+                    $nomdestination = $path.$fichier_nom;
+                }
+
                 move_uploaded_file($nom, $nomdestination);
                 //move_uploaded_file($_FILES["photo"]["tmp_name"], "upload/" . $_FILES["photo"]["name"]);
 

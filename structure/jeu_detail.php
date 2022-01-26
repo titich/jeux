@@ -5,6 +5,8 @@
 
 include_once dirname(__FILE__) . '/../structure/sql.php';
 include_once dirname(__FILE__) . '/../structure/header.php';
+
+include_once dirname(__FILE__) . '/../function/media_type_MIME.php';
 //echo $_SERVER['SERVER_NAME'];
 
 $array_pagnation=array();
@@ -302,34 +304,10 @@ if($nbre_liste_jeu>=1){
 
 
         //var_dump($bdd_liste_jeu->jeu_media_MIME);
+        $affichage_media.=media_type_MIME($bdd_liste_jeu->jeu_media_MIME);
 
-        switch ($bdd_liste_jeu->jeu_media_MIME) {
-            case "application/pdf":
-                $affichage_media.='<h3><i class="far fa-file-pdf"></i></h3>';
-                break;
-            case "image/jpg":
-            case "image/png":
-                $affichage_media.='<h3><i class="far fa-file-image"></i></h3>';
-                break;
-            case "application/word":
-                $affichage_media.='<h3><i class="far fa-file-word"></i></h3>';
-                break;
-            case "application/powerpoint":
-                $affichage_media.='<h3><i class="far fa-file-powerpoint"></i></h3>';
-                break;
-            case "application/excel":
-                $affichage_media.='<h3><i class="far fa-file-excel"></i></h3>';
-                break;
-            case "sound/mp3":
-                $affichage_media.='<h3><i class="far fa-file-audio"></i></h3>';
-                break;
-            case "application/zip":
-                $affichage_media.='<h3><i class="far fa-file-archive"></i></h3>';
-                break;
-            default:
-                $affichage_media.='<h3><i class="far fa-file"></i></h3>';
-                break;
-        }
+
+
         $affichage_media.='</a>';
 
         $media_last=$bdd_liste_jeu->jeu_media_type;
