@@ -79,6 +79,7 @@ if ($result_liste_jeux = mysqli_query($ezine_db,$sql_liste_jeux )) {
     if(mysqli_num_rows($result_liste_jeux)!=0){
         while ($bdd_liste_jeux = mysqli_fetch_object($result_liste_jeux)) {
             if($array_detail_jeu_iter2=simplexml_load_file('https://www.boardgamegeek.com/xmlapi2/thing?id='.$bdd_liste_jeux->jeu_bgg_id.'&stats=1')){
+                //var_dump("<hr>");
                 //var_dump($array_detail_jeu_iter2);
 
                 $array_detail_jeu_iter=(array)$array_detail_jeu_iter2;

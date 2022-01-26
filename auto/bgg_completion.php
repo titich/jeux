@@ -167,25 +167,25 @@ while($xml=="erreur"){
 
             /////////////////////////////////remplissage bdd////////////////////////////////////
             $array_champ=array(
-                array('jeu_bgg_yearpublished',$annee_publication),
-                array('jeu_bgg_numplays',$jeu_actu_array["numplays"]),
-                array('jeu_bgg_image',$jeu_actu_array["image"]),
-                array('jeu_bgg_thumbnail',$jeu_actu_array["thumbnail"]),
-                array('jeu_bgg_own',$jeu_actu_status["@attributes"]["own"]),
-                array('jeu_bgg_preordered',$jeu_actu_status["@attributes"]["preordered"]),
-                array('jeu_bgg_prevowned',$jeu_actu_status["@attributes"]["prevowned"]),
-                array('jeu_bgg_fortrade',$jeu_actu_status["@attributes"]["fortrade"]),
-                array('jeu_bgg_want',$jeu_actu_status["@attributes"]["want"]),
-                array('jeu_bgg_wanttoplay',$jeu_actu_status["@attributes"]["wanttoplay"]),
-                array('jeu_bgg_wanttobuy',$jeu_actu_status["@attributes"]["wanttobuy"]),
-                array('jeu_bgg_wishlist',$jeu_actu_status["@attributes"]["wishlist"]),
-                array('jeu_bgg_lastmodified',$jeu_actu_status["@attributes"]["lastmodified"]),
-                array('jeu_bgg_id',$jeu_actu_array["@attributes"]["objectid"]),
-                array('jeu_bgg_width',$jeu_bgg_width["@attributes"]["value"]),
-                array('jeu_bgg_length',$jeu_bgg_length["@attributes"]["value"]),
-                array('jeu_bgg_depth',$jeu_bgg_depth["@attributes"]["value"]),
-                array('jeu_bgg_weight',$jeu_bgg_weight["@attributes"]["value"]),
-                array('jeu_bgg_collid',$jeu_actu_array["@attributes"]["collid"]),
+                array('jeu_bgg_yearpublished',$annee_publication,0),
+                array('jeu_bgg_numplays',$jeu_actu_array["numplays"],1),
+                array('jeu_bgg_image',$jeu_actu_array["image"],0),
+                array('jeu_bgg_thumbnail',$jeu_actu_array["thumbnail"],0),
+                array('jeu_bgg_own',$jeu_actu_status["@attributes"]["own"],0),
+                array('jeu_bgg_preordered',$jeu_actu_status["@attributes"]["preordered"],0),
+                array('jeu_bgg_prevowned',$jeu_actu_status["@attributes"]["prevowned"],0),
+                array('jeu_bgg_fortrade',$jeu_actu_status["@attributes"]["fortrade"],0),
+                array('jeu_bgg_want',$jeu_actu_status["@attributes"]["want"],0),
+                array('jeu_bgg_wanttoplay',$jeu_actu_status["@attributes"]["wanttoplay"],0),
+                array('jeu_bgg_wanttobuy',$jeu_actu_status["@attributes"]["wanttobuy"],0),
+                array('jeu_bgg_wishlist',$jeu_actu_status["@attributes"]["wishlist"],0),
+                array('jeu_bgg_lastmodified',$jeu_actu_status["@attributes"]["lastmodified"],0),
+                array('jeu_bgg_id',$jeu_actu_array["@attributes"]["objectid"],0),
+                array('jeu_bgg_width',$jeu_bgg_width["@attributes"]["value"],0),
+                array('jeu_bgg_length',$jeu_bgg_length["@attributes"]["value"],0),
+                array('jeu_bgg_depth',$jeu_bgg_depth["@attributes"]["value"],0),
+                array('jeu_bgg_weight',$jeu_bgg_weight["@attributes"]["value"],0),
+                array('jeu_bgg_collid',$jeu_actu_array["@attributes"]["collid"],0),
             );
 
 
@@ -218,6 +218,7 @@ while($xml=="erreur"){
                                 }
 
 
+
                                 //if($champ_actu[1]!=$obj->{$champ_actu[0]} and $obj->{$champ_actu[0]}!=0){
                                 if(($champ_actu[1]!=$obj->{$champ_actu[0]}) AND !($champ_actu[1]=="NULL" AND is_null($obj->{$champ_actu[0]}))){
                                     //echo "<br>".$champ_actu[0]."";
@@ -233,6 +234,32 @@ while($xml=="erreur"){
                                     }
                                     $sql_a_modifier.="`".$champ_actu[0]."` = ".$data."";
                                     $sql_liste_modif.=$champ_actu[0];
+
+                                    if($champ_actu[2]==1){
+                                        $sql_existe = "SELECT * \n"
+                                            . "FROM `evolution_note_type` \n"
+                                            . "WHERE `evolution_note_type_nom` = '".$champ_actu[0]."'";
+                                        //echo "<p>".$sql_existe."</p>";
+                                        $res_existe = mysqli_query ($ezine_db, $sql_existe) or ezine_mysql_die($ezine_db, $sql_existe) ;
+                                        //$num_ticket=mysqli_insert_id($ezine_db);
+                                        $nbre_existe=mysqli_num_rows($res_existe);
+                                        if($nbre_existe==0){
+                                            $sql_existe2 = "INSERT INTO `evolution_note_type`(`evolution_note_type_nom`) \n"
+                                                . "VALUES ('".$champ_actu[0]."') \n";
+                                            //echo "<p>".$sql_existe."</p>";
+                                            mysqli_query ($ezine_db, $sql_existe2) or ezine_mysql_die($ezine_db, $sql_existe2) ;
+                                            $id_evolution_note_type=mysqli_insert_id($ezine_db);
+                                        }else{
+                                            $bdd_existe = mysqli_fetch_object($res_existe);
+                                            $id_evolution_note_type=$bdd_existe->evolution_note_type_id;
+                                        }
+
+                                        $sql_existe3 = "INSERT INTO `evolution_note`(`jeu`, `evolution_note_type`, `evolution_note_de`, `evolution_note_a`) \n"
+                                            . "VALUES ('".$obj->jeu_id."','".$id_evolution_note_type."','".$obj->{$champ_actu[0]}."','".$champ_actu[1]."') \n";
+                                        //echo "<p>".$sql_existe."</p>";
+                                        mysqli_query ($ezine_db, $sql_existe3) or ezine_mysql_die($ezine_db, $sql_existe3) ;
+                                    }
+
                                 }
                                 //echo "<br>".$sql_a_modifier."";
                             }
