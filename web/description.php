@@ -2,11 +2,11 @@
 include_once dirname(__FILE__) . '/../structure/sql.php';
 //include_once dirname(__FILE__) . '/../structure/header.php'; // plus loin
 //echo $_SERVER['SERVER_NAME'];
-
+require dirname(__FILE__) . '/../cle/cle.php';
 require dirname(__FILE__) . '/../vendor/autoload.php';
 use BabyMarkt\DeepL\DeepL;
-$authKey = '1e26389b-5ef7-322d-ad5c-81ee07aede1c:fx';
-$deepl   = new DeepL($authKey,2,'api-free.deepl.com');
+
+$deepl   = new DeepL($authKey_Deepl,2,'api-free.deepl.com');
 
 //var_dump($_POST);
 

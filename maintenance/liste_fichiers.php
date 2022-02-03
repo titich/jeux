@@ -9,6 +9,7 @@ include_once dirname(__FILE__) . '/../function/slugify.php';
 //echo $_SERVER['SERVER_NAME'];
 //var_dump($_POST);
 
+if($a_faire[3]["nbre_a_faire"]>=1){
 $sql_liste_jeu = "SELECT\n"
     . "    `jeu_media_id`,\n"
     . "    `jeu_nom`,\n"
@@ -27,7 +28,7 @@ $sql_liste_jeu = "SELECT\n"
     . "WHERE\n"
     . "    `language` IS NULL\n"
     . "     OR `jeu_media_a_imprimer` IS NULL\n"
- //   . "     OR `jeu_media_imprimer` IS NULL\n"
+    //   . "     OR `jeu_media_imprimer` IS NULL\n"
     . "     OR `jeu_media_officiel` IS NULL\n"
     . "ORDER BY `jeu`.`jeu_nom` ASC\n"
     . "LIMIT 0,1;";
@@ -85,8 +86,8 @@ while($bdd_langue = mysqli_fetch_object($res_langue)){
 
 
 $array_checked=array(
-        array("nom" => "est officiel",          "champ_bdd" => "jeu_media_officiel",    ),
-        array("nom" => "est à faire imprimer",  "champ_bdd" => "jeu_media_a_imprimer",  ),
+    array("nom" => "est officiel",          "champ_bdd" => "jeu_media_officiel",    ),
+    array("nom" => "est à faire imprimer",  "champ_bdd" => "jeu_media_a_imprimer",  ),
 );
 
 $btn_swich=null;
@@ -166,6 +167,18 @@ echo $translatedText; // Prints "Hallo Welt!"*/
             </div>
         </form>
     </div>
+<?php
+    }else{
+    ?>
+    <div class="position-relative overflow-hidden bg-light p-3">
+        <div class="alert alert-success" role="alert">
+            <h3>Il n'y a rien a faire</h3>
+        </div>
+    </div>
+    <?php
+    }
+?>
+
 
 
 
