@@ -14,9 +14,14 @@ while($bdd_nbre_description = mysqli_fetch_array($res_nbre_description)){
     }else{
         $bdd_nbre_description["badge"]='<span class="badge bg-primary rounded-pill">'.$bdd_nbre_description["nbre_a_faire"].'</span>';
     }
+    if($bdd_nbre_description["affichage"]==0){
+        $bdd_nbre_description["nbre_a_faire_affichage"]=0;
+    }else{
+        $bdd_nbre_description["nbre_a_faire_affichage"]=$bdd_nbre_description["nbre_a_faire"];
+    }
     $a_faire[]=$bdd_nbre_description;
 }
-$tot_a_faire = array_sum(array_column($a_faire, 'nbre_a_faire'));
+$tot_a_faire = array_sum(array_column($a_faire, 'nbre_a_faire_affichage'));
 //var_dump($a_faire);
 
 ?>
@@ -38,6 +43,7 @@ $tot_a_faire = array_sum(array_column($a_faire, 'nbre_a_faire'));
                             <a class="dropdown-item" href="../web/liste_jeux.php?p=poids"><li class="d-flex justify-content-between align-items-center">Écrire poids<?php echo $a_faire[0]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../web/description.php"><li class="d-flex justify-content-between align-items-center">Description<?php echo $a_faire[1]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../web/liste_jeux.php?p=media"><li class="d-flex justify-content-between align-items-center">Media<?php echo $a_faire[2]["badge"]; ?></li></a>
+                            <a class="dropdown-item" href="../maintenance/liste_fichiers.php"><li class="d-flex justify-content-between align-items-center">compléter media<?php echo $a_faire[3]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../auto/bgg_completion.php" target="_blank"><li class="d-flex justify-content-between align-items-center">Mise à jour</li></a>
                         </ul>
                     </li>
