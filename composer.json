@@ -13,6 +13,9 @@
     "babymarkt/deepl-php-lib": "^3.0",
     "nataniel/bggxmlapi2": "^1.1",
     "lukesnowden/google-shopping-feed": "^2.2",
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "guzzlehttp/guzzle": "*",
+    "paquettg/php-html-parser": "*",
+    "mcuadros/currency-detector": "dev-master"
   }
 }
