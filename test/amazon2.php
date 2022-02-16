@@ -3,9 +3,10 @@ include_once dirname(__FILE__) . '/../structure/sql.php';
 include_once dirname(__FILE__) . '/../structure/header.php';
 //echo $_SERVER['SERVER_NAME'];
 require dirname(__FILE__) . '/../vendor/autoload.php';
+require dirname(__FILE__) . '/../cle/cle.php';
 
 
-$api_key = 'bb4592e8ff21a9c4a18a45d064068f0d77ad34fe';
+$api_key = $api_key_amazon;
 $country = 'CH';
 $q = urlencode($_GET['q']);
 $startIndex = (isset($_GET['start'])) ? $_GET['start'] : '0';
