@@ -26,6 +26,7 @@ if(false !== $response_json) {
             //$valeur2 =$response->conversion_rates->CHF;
             $euro =$response->conversion_rates->EUR;
             $dollar =$response->conversion_rates->USD;
+            $australian_dollar =$response->conversion_rates->AUD;
 
         }
 
@@ -44,8 +45,8 @@ var_dump("<hr>");*/
 
 
 
-$sql_cours = "INSERT INTO `cours_acuel` (`cours_acuel_id`, `cours_acuel_euro`, `cours_acuel_dollar`, `cours_acuel_date`)\n"
-    . "VALUES (NULL, '".$euro."', '".$dollar."', NOW());";
+$sql_cours = "INSERT INTO `cours_actuel` (`cours_actuel_id`, `cours_actuel_EUR`, `cours_actuel_USD`, `cours_actuel_AUD`, `cours_actuel_date`)\n"
+    . "VALUES (NULL, '".$euro."', '".$dollar."', '".$australian_dollar."', NOW());";
 
 //echo "<p>".$sql_cours."</p>";
 mysqli_query ($ezine_db, $sql_cours) or ezine_mysql_die($ezine_db, $sql_cours) ;
