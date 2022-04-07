@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="dfd5f477-59de-4d80-97e0-74a7ee96a610" name="conod ftp" url="https://jeux.conod.org">
-        <fileTransfer host="www.conod.org" port="21">
+        <fileTransfer accessType="FTPS" host="www.conod.org" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

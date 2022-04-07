@@ -45,7 +45,7 @@ $tot_a_faire = array_sum(array_column($a_faire, 'nbre_a_faire_affichage'));
                             <a class="dropdown-item" href="../web/liste_jeux.php?p=media"><li class="d-flex justify-content-between align-items-center">Media<?php echo $a_faire[2]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../maintenance/liste_fichiers.php"><li class="d-flex justify-content-between align-items-center">compléter media<?php echo $a_faire[3]["badge"]; ?></li></a>
                             <a class="dropdown-item" href="../auto/bgg_completion.php" target="_blank"><li class="d-flex justify-content-between align-items-center">Mise à jour</li></a>
-                            <a class="dropdown-item" href="../test/data_bgstats2.php" target="_blank"><li class="d-flex justify-content-between align-items-center">Up BGStats</li></a>
+                            <a class="dropdown-item" href="../test/data_bgstats3.php" target="_blank"><li class="d-flex justify-content-between align-items-center">Up BGStats</li></a>
 
                         </ul>
                     </li>

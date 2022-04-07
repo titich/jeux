@@ -24,9 +24,10 @@ if(false !== $response_json) {
             //$base_price = 12; // Your price in USD
             //$valeur =  round(($valeur * $response->conversion_rates->CHF), 2);
             //$valeur2 =$response->conversion_rates->CHF;
-            $euro =$response->conversion_rates->EUR;
-            $dollar =$response->conversion_rates->USD;
-            $australian_dollar =$response->conversion_rates->AUD;
+            $euro =             $response->conversion_rates->EUR;
+            $dollar =           $response->conversion_rates->USD;
+            $australian_dollar= $response->conversion_rates->AUD;
+            $canadian_dollar =  $response->conversion_rates->CAD;
 
         }
 
@@ -45,13 +46,16 @@ var_dump("<hr>");*/
 
 
 
-$sql_cours = "INSERT INTO `cours_actuel` (`cours_actuel_id`, `cours_actuel_EUR`, `cours_actuel_USD`, `cours_actuel_AUD`, `cours_actuel_date`)\n"
-    . "VALUES (NULL, '".$euro."', '".$dollar."', '".$australian_dollar."', NOW());";
+$sql_cours = "INSERT INTO `cours_actuel` (`cours_actuel_id`, `cours_actuel_EUR`, `cours_actuel_USD`, `cours_actuel_AUD`, `cours_actuel_CAD`, `cours_actuel_date`)\n"
+    . "VALUES (NULL, '".$euro."', '".$dollar."', '".$australian_dollar."', '".$canadian_dollar."', NOW());";
 
 //echo "<p>".$sql_cours."</p>";
 mysqli_query ($ezine_db, $sql_cours) or ezine_mysql_die($ezine_db, $sql_cours) ;
 
 
+$sql_update_prix = "CALL p_prix_magasin();";
+//echo "<p>".$sql_cours."</p>";
+mysqli_query ($ezine_db, $sql_update_prix) or ezine_mysql_die($ezine_db, $sql_update_prix) ;
 
 
 

@@ -80,8 +80,13 @@ if($key_pagnation>=$nbre_pagnation-1){
 //var_dump($key_pagnation);
 
 
-$sql_jeu_detail = "SELECT *\n"
-    . "FROM `jeu`\n"
+$sql_jeu_detail = "SELECT * ,`duree_moyenne`\n"
+    . "FROM `jeu` \n"
+    . "LEFT JOIN (\n"
+    . "    SELECT `jeu`, AVG(`jeu_partie_duree`) AS `duree_moyenne`\n"
+    . "    FROM `jeu_partie` \n"
+    . "    WHERE `jeu` = ".$id."\n"
+    . "    GROUP BY `jeu`  ) AS `b`  ON `b`.`jeu` = `jeu`.`jeu_id`\n"
     . "WHERE `jeu_id` = ".$id;
 //echo "<p>".$sql_jeu_detail."</p>";
 $res_jeu_detail = mysqli_query ($ezine_db, $sql_jeu_detail) or ezine_mysql_die($ezine_db, $sql_jeu_detail) ;
@@ -119,6 +124,7 @@ function data_cat($ezine_db,$id, $cat,$bdd){
 $ligne_editeur=data_cat($ezine_db,$id,"editeur","boardgamepublisher");
 $ligne_artist=data_cat($ezine_db,$id,"artist","artist");
 $ligne_createur=data_cat($ezine_db,$id,"createur","designer");*/
+//var_dump(data_cat($ezine_db,$id,"artist","artist"));
 //var_dump($ligne_editeur);
 
 function enlever_trait($txt){
@@ -183,19 +189,20 @@ function convertToHoursMins($time, $format = '%02d:%02d') {
 
 
 $data_array=array(
-    array("nom"=>"Volume","data"=>$bdd_jeu_detail->jeu_x." x ".$bdd_jeu_detail->jeu_y." x ".$bdd_jeu_detail->jeu_z." mm", "logo" => "fas fa-ruler-combined"),
-    array("nom"=>"Poids","data"=>$bdd_jeu_detail->jeu_poids." Kg", "logo" => "fas fa-weight-hanging"),
-    array("nom"=>"Année de publication","data"=>$bdd_jeu_detail->jeu_bgg_yearpublished, "logo" => "fas fa-calendar-alt"),
-    array("nom"=>"Nbre de parties jouées","data"=>$bdd_jeu_detail->jeu_bgg_numplays, "logo" => "fas fa-calculator"),
-    array("nom"=>"Nbre de joueurs","data"=>$bdd_jeu_detail->jeu_bgg_minplayers." à ".$bdd_jeu_detail->jeu_bgg_maxplayers, "logo" => "fas fa-users"),
-    array("nom"=>"Nbre de joueurs recommandé","data"=>enlever_trait($bdd_jeu_detail->jeu_bgg_nb_player_recommended), "logo" => "fas fa-users"),
-    array("nom"=>"Nbre de joueurs best","data"=>enlever_trait($bdd_jeu_detail->jeu_bgg_nb_player_best), "logo" => "fas fa-users"),
-    array("nom"=>"Note","data"=>$bdd_jeu_detail->jeu_bgg_note, "logo" => "fas fa-crown"),
-    array("nom"=>"Difficulté","data"=>$bdd_jeu_detail->jeu_bgg_averageweight, "logo" => "fas fa-balance-scale"),
-    array("nom"=>"Durée","data"=>convertToHoursMins($bdd_jeu_detail->jeu_bgg_playingtime)."", "logo" => "fas fa-clock"),
-    array("nom"=>"éditeur","data"=>data_cat($ezine_db,$id,"editeur","boardgamepublisher"), "logo" => "far fa-copyright"),
-    array("nom"=>"Créateur","data"=>data_cat($ezine_db,$id,"createur","designer"), "logo" => "fas fa-hat-wizard"),
-    array("nom"=>"Artiste","data"=>data_cat($ezine_db,$id,"artist","artist"), "logo" => "fas fa-paint-brush"),
+    array("nom"=>"Volume","data"=>$bdd_jeu_detail->jeu_x." x ".$bdd_jeu_detail->jeu_y." x ".$bdd_jeu_detail->jeu_z." mm", "logo" => "fas fa-ruler-combined","masque"=>" x  x  mm"),
+    array("nom"=>"Poids","data"=>$bdd_jeu_detail->jeu_poids." Kg", "logo" => "fas fa-weight-hanging","masque"=>" Kg"),
+    array("nom"=>"Année de publication","data"=>$bdd_jeu_detail->jeu_bgg_yearpublished, "logo" => "fas fa-calendar-alt","masque"=>null),
+    array("nom"=>"Nbre de parties jouées","data"=>$bdd_jeu_detail->jeu_bgg_numplays, "logo" => "fas fa-calculator","masque"=>null),
+    array("nom"=>"Nbre de joueurs","data"=>$bdd_jeu_detail->jeu_bgg_minplayers." à ".$bdd_jeu_detail->jeu_bgg_maxplayers, "logo" => "fas fa-users","masque"=>null),
+    array("nom"=>"Nbre de joueurs recommandé","data"=>enlever_trait($bdd_jeu_detail->jeu_bgg_nb_player_recommended), "logo" => "fas fa-users","masque"=>null),
+    array("nom"=>"Nbre de joueurs best","data"=>enlever_trait($bdd_jeu_detail->jeu_bgg_nb_player_best), "logo" => "fas fa-users","masque"=>null),
+    array("nom"=>"Note","data"=>$bdd_jeu_detail->jeu_bgg_note, "logo" => "fas fa-crown","masque"=>null),
+    array("nom"=>"Difficulté","data"=>$bdd_jeu_detail->jeu_bgg_averageweight, "logo" => "fas fa-balance-scale","masque"=>null),
+    array("nom"=>"Durée","data"=>convertToHoursMins($bdd_jeu_detail->jeu_bgg_playingtime)."", "logo" => "fas fa-clock","masque"=>null),
+    array("nom"=>"Durée moyenne constatée","data"=>convertToHoursMins($bdd_jeu_detail->duree_moyenne)."", "logo" => "fas fa-clock","masque"=>null),
+    array("nom"=>"éditeur","data"=>data_cat($ezine_db,$id,"editeur","boardgamepublisher"), "logo" => "far fa-copyright","masque"=>null),
+    array("nom"=>"Créateur","data"=>data_cat($ezine_db,$id,"createur","designer"), "logo" => "fas fa-hat-wizard","masque"=>null),
+    array("nom"=>"Artiste","data"=>data_cat($ezine_db,$id,"artist","artist"), "logo" => "fas fa-paint-brush","masque"=>null),
 );
 
 /*$ligne_editeur=data_cat($ezine_db,$id,"editeur","boardgamepublisher");
@@ -208,10 +215,15 @@ foreach ($data_array as $data_actu){
     //var_dump("<br>");
     //echo "<br>";
     //var_dump(empty($data_actu["data"]));
-    //var_dump($data_actu["data"]);
-    //var_dump(is_null($data_actu["data"]));
+    /*var_dump($data_actu["data"]);
+    var_dump($data_actu["masque"]);
+    echo "<hr>";
+    var_dump(!is_null($data_actu["data"]));
+    var_dump($data_actu["data"]!=$data_actu["masque"]);
+    echo "<hr>";
+    echo "<hr>";*/
 
-    if(!is_null($data_actu["data"])){
+    if(!is_null($data_actu["data"]) AND $data_actu["data"]!=$data_actu["masque"]){
         $tableau_data.='<tr data-bs-toggle="tooltip" data-bs-placement="left" title="'.$data_actu["nom"].'">';
         $tableau_data.='<th scope="row" style="text-align: right;"><i class="'.$data_actu["logo"].'"></i></th>';
         //$tableau_data.='<th scope="row" style="text-align: right;"><i class="'.$data_actu["logo"].'"></i>'.$data_actu["nom"].'</th>';
@@ -252,7 +264,6 @@ $nbre_liste_extention=mysqli_num_rows($res_liste_extention);
 $extention_data_own=null;
 $extention_data_no_own=null;
 while($bdd_liste_extention = mysqli_fetch_object($res_liste_extention)){
-
 
     if($bdd_liste_extention->posedee==1){
         $sql_detail_ext = "SELECT `jeu_id` \n"
